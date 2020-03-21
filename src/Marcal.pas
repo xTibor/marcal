@@ -20,6 +20,9 @@ uses
   OP  RD  RA  RB
 
   000 000 000 000
+  OP  RD  RA  IMM
+
+  000 000 000 000
   OP  RD  IMM-IMM
 
   When registers or immediate arguments not present, use implicit 0 arguments.
@@ -32,42 +35,42 @@ uses
 
 type
   TOpcode = (
-    ocReserved13           = -13, { <?> }
-    ocReserved12           = -12, { <?> }
-    ocReserved11           = -11, { <?> }
-    ocReserved10           = -10, { <?> }
-    ocReserved9            =  -9, { <?> }
-    ocReserved8            =  -8, { <?> }
-    ocReserved7            =  -7, { <?> }
-    ocReserved6            =  -6, { <?> }
-    ocReserved5            =  -5, { <?> }
-    ocReserved4            =  -4, { <?> }
-    ocReserved3            =  -3, { <?> }
-    ocReserved2            =  -2, { <?> }
-    ocReserved1            =  -1, { <?> }
-    ocAddRegister          =   0, { REG } { ADDR RD, RA, RB }
-    ocAddImmediate         =   1, { IMM } { ADDI RD, 123    }
-    ocLoadLowImmediate     =   2, { IMM } { LDLI RD, 123    }
-    ocLoadHighImmediate    =   3, { IMM } { LDHI RD, 123    }
-    ocLoadMemory           =   4, { REG } { LDMR RD, RA, RB }
-    ocStoreMemory          =   5, { REG } { STMR RD, RA, RB }
-    ocBranchEquals         =   6, { REG } { BREQ RD, RA, RB }
-    ocBranchNotEquals      =   7, { REG } { BRNE RD, RA, RB }
-    ocBranchLessThan       =   8, { REG } { BRLT RD, RA, RB }
-    ocBranchLessEqualsThan =   9, { REG } { BRLE RD, RA, RB }
-    ocPush                 =  10, { REG } { PSHR SP, RA     }
-    ocPop                  =  11, { REG } { POPR SP, RA     }
-    ocCall                 =  12, { REG } { CALL SP, RA     }
-    ocReserved             =  13  { <?> }
+    ocReserved13           = -13, { <??> }
+    ocReserved12           = -12, { <??> }
+    ocReserved11           = -11, { <??> }
+    ocReserved10           = -10, { <??> }
+    ocReserved9            =  -9, { <??> }
+    ocReserved8            =  -8, { <??> }
+    ocReserved7            =  -7, { <??> }
+    ocReserved6            =  -6, { <??> }
+    ocReserved5            =  -5, { <??> }
+    ocReserved4            =  -4, { <??> }
+    ocReserved3            =  -3, { <??> }
+    ocReserved2            =  -2, { <??> }
+    ocReserved1            =  -1, { <??> }
+    ocAddRegister          =   0, { RGTR } { ADDR RD, RA, RB }
+    ocAddImmediateShort    =   1, { IMM3 } { ADSI RD, RA, 12 }
+    ocAddImmediateHalf     =   2, { IMM6 } { ADHI RD, 123    }
+    ocLoadLowImmediate     =   3, { IMM6 } { LDLI RD, 123    }
+    ocLoadHighImmediate    =   4, { IMM6 } { LDHI RD, 123    }
+    ocLoadMemory           =   5, { RGTR } { LDMR RD, RA, RB }
+    ocStoreMemory          =   6, { RGTR } { STMR RD, RA, RB }
+    ocBranchEquals         =   7, { RGTR } { BREQ RD, RA, RB }
+    ocBranchNotEquals      =   8, { RGTR } { BRNE RD, RA, RB }
+    ocBranchLessThan       =   9, { RGTR } { BRLT RD, RA, RB }
+    ocBranchLessEqualsThan =  10, { RGTR } { BRLE RD, RA, RB }
+    ocPush                 =  11, { RGTR } { PSHR SP, RA     }
+    ocPop                  =  12, { RGTR } { POPR SP, RA     }
+    ocCall                 =  13  { RGTR } { CALL SP, RA     }
     { Synthesized opcodes ------------------------------------------- }
     { NoOperation             } { NOOP             => ADDR R0, R0, R0 }
     { Return                  } { RTRN             => POPR SP, PC     }
     { BranchGreaterThan       } { BRGT RD, RA, RB  => BRLE RD, RB, RA }
     { BranchGreaterEqualsThan } { BRGE RD, RA, RB  => BRLT RD, RB, RA }
     { LoadImmediate           } { LDI RD, -264992  => LDHI RD, -364   }
-                                {                     ADDI RD, 364    }
+                                {                     ADHI RD, 364    }
     { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
-                                {                     ADDI RD, -182   }
+                                {                     ADHI RD, -182   }
                                 {                     LDMR RD, RD, R0 }
     { --------------------------------------------------------------- }
   );
@@ -153,7 +156,8 @@ var
   LRegD: TRegister;
 
   LHalfSplice: THalfSplice;
-  LImmediate: THalfTryte;
+  LImmediateShort: TShortTryte;
+  LImmediateHalf: THalfTryte;
 begin
   with AContext do begin
     LProgramCounter := Memory[Registers[regProgramCounter]];
@@ -164,10 +168,12 @@ begin
     LRegD      := TRegister(LShortSplice[2]);
     LRegA      := TRegister(LShortSplice[1]);
     LRegB      := TRegister(LShortSplice[0]);
-    LImmediate := LHalfSplice[0];
+
+    LImmediateShort := LShortSplice[0];
+    LImmediateHalf := LHalfSplice[0];
 
     WriteLn(LOpcode, ' ', LRegD, ' ', LRegA, ' ', LRegB);
-    WriteLn(LongTryteToStr(LImmediate), ' (', LImmediate:7, ') ');
+    WriteLn(LongTryteToStr(LImmediateHalf), ' (', LImmediateHalf:7, ') ');
     WriteLn();
 
     Registers[regProgramCounter] += 1;
@@ -175,13 +181,16 @@ begin
     case LOpcode of
       ocLoadLowImmediate:
         if LRegD <> regZero then
-          Registers[LRegD] := LImmediate;
+          Registers[LRegD] := LImmediateHalf;
       ocLoadHighImmediate:
         if LRegD <> regZero then
-          Registers[LRegD] := LImmediate * 729; { << 6 }
-      ocAddImmediate:
+          Registers[LRegD] := LImmediateHalf * 729; { << 6 }
+      ocAddImmediateShort:
         if LRegD <> regZero then
-          Registers[LRegD] += LImmediate;
+          Registers[LRegD] := Registers[LRegA] + LImmediateShort;
+      ocAddImmediateHalf:
+        if LRegD <> regZero then
+          Registers[LRegD] += LImmediateHalf;
       ocAddRegister:
         if LRegD <> regZero then
           Registers[LRegD] := Registers[LRegA] + Registers[LRegB];
@@ -228,7 +237,7 @@ procedure AssembleProgram(var AContext: TExecutionContext);
 var
   ProgramCounter: TLongTryte;
 
-  procedure OpReg(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister);
+  procedure OpRgtr(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister);
   begin
     AContext.Memory[ProgramCounter] :=
       (LongInt(AOpcode) * 19683) + { << 9 }
@@ -238,7 +247,17 @@ var
     ProgramCounter += 1;
   end;
 
-  procedure OpImm(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfTryte);
+  procedure OpImm3(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TShortTryte);
+  begin
+    AContext.Memory[ProgramCounter] :=
+      (LongInt(AOpcode)    * 19683) + { << 9 }
+      (LongInt(ARegD)      *   729) + { << 6 }
+      (LongInt(ARegA)      *    27) + { << 3 }
+      (LongInt(AImmediate) *     1);  { << 0 }
+    ProgramCounter += 1;
+  end;
+
+  procedure OpImm6(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfTryte);
   begin
     AContext.Memory[ProgramCounter] :=
       (LongInt(AOpcode)    * 19683) + { << 9 }
@@ -250,22 +269,18 @@ var
 begin
   ProgramCounter := 0;
 
-  OpImm(ocLoadHighImmediate, regUser1, -364);
-  OpImm(ocAddImmediate, regUser1, 364);
-
-  OpReg(ocAddRegister, regUser12, regZero, regZero);
-  OpReg(ocAddRegister, regUser13, regZero, regZero);
-  OpImm(ocAddImmediate, regUser12, 1);
-  OpImm(ocAddImmediate, regUser13, -2);
-
-  OpReg(ocAddRegister, regUser2, regZero, regZero);
-  OpReg(ocAddRegister, regUser3, regZero, regZero);
-
-  OpReg(ocAddRegister, regUser2, regUser2, regUser12);
-  OpReg(ocAddRegister, regUser3, regUser3, regUser13);
-
-  OpImm(ocAddImmediate, regProgramCounter, -3);
-  OpReg(ocReserved13, regZero, regZero, regZero);
+  OpImm6(ocLoadHighImmediate, regUser11, 14);
+  OpImm6(ocAddImmediateHalf,  regUser11, -206);
+  OpImm6(ocLoadLowImmediate,  regUser1, 0);
+  OpImm6(ocLoadLowImmediate,  regUser2, 0);
+  OpImm6(ocAddImmediateHalf,  regUser1, 1);
+  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4);
+  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);
+  OpImm6(ocLoadHighImmediate, regUser1, -14);
+  OpImm6(ocAddImmediateHalf,  regUser1, 206);
+  OpImm6(ocAddImmediateHalf,  regUser2, 1);
+  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);
+  OpRgtr(ocReserved13,        regZero, regZero, regZero);
 end;
 
 var
