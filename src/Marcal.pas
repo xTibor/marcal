@@ -22,6 +22,8 @@ uses
   000 000 000 000
   OP  RD  IMM-IMM
 
+  When registers or immediate arguments not present, use implicit 0 arguments.
+
   R0 - Zero
   R1 - Program counter
 
@@ -30,32 +32,44 @@ uses
 
 type
   TOpcode = (
-    ocReserved13           = -13,
-    ocReserved12           = -12,
-    ocReserved11           = -11,
-    ocReserved10           = -10,
-    ocReserved9            =  -9,
-    ocReserved8            =  -8,
-    ocReserved7            =  -7,
-    ocReserved6            =  -6,
-    ocReserved5            =  -5,
-    ocReserved4            =  -4,
-    ocReserved3            =  -3,
-    ocReserved2            =  -2,
-    ocReserved1            =  -1,
-    ocAddRegister          =   0,
-    ocLoadImmediate        =   1,
-    ocLoadHighImmediate    =   2,
-    ocAddImmediate         =   3,
-    ocLoadMemory           =   4,
-    ocStoreMemory          =   5,
-    ocBranchEquals         =   6,
-    ocBranchNotEquals      =   7,
-    ocBranchLessThan       =   8,
-    ocBranchLessEqualsThan =   9,
-    ocPush                 =  10,
-    ocPop                  =  11,
-    ocCall                 =  12
+    ocReserved13           = -13, { <?> }
+    ocReserved12           = -12, { <?> }
+    ocReserved11           = -11, { <?> }
+    ocReserved10           = -10, { <?> }
+    ocReserved9            =  -9, { <?> }
+    ocReserved8            =  -8, { <?> }
+    ocReserved7            =  -7, { <?> }
+    ocReserved6            =  -6, { <?> }
+    ocReserved5            =  -5, { <?> }
+    ocReserved4            =  -4, { <?> }
+    ocReserved3            =  -3, { <?> }
+    ocReserved2            =  -2, { <?> }
+    ocReserved1            =  -1, { <?> }
+    ocAddRegister          =   0, { REG } { ADDR RD, RA, RB }
+    ocAddImmediate         =   1, { IMM } { ADDI RD, 123    }
+    ocLoadLowImmediate     =   2, { IMM } { LDLI RD, 123    }
+    ocLoadHighImmediate    =   3, { IMM } { LDHI RD, 123    }
+    ocLoadMemory           =   4, { REG } { LDMR RD, RA, RB }
+    ocStoreMemory          =   5, { REG } { STMR RD, RA, RB }
+    ocBranchEquals         =   6, { REG } { BREQ RD, RA, RB }
+    ocBranchNotEquals      =   7, { REG } { BRNE RD, RA, RB }
+    ocBranchLessThan       =   8, { REG } { BRLT RD, RA, RB }
+    ocBranchLessEqualsThan =   9, { REG } { BRLE RD, RA, RB }
+    ocPush                 =  10, { REG } { PSHR SP, RA     }
+    ocPop                  =  11, { REG } { POPR SP, RA     }
+    ocCall                 =  12, { REG } { CALL SP, RA     }
+    ocReserved             =  13  { <?> }
+    { Synthesized opcodes ------------------------------------------- }
+    { NoOperation             } { NOOP             => ADDR R0, R0, R0 }
+    { Return                  } { RTRN             => POPR SP, PC     }
+    { BranchGreaterThan       } { BRGT RD, RA, RB  => BRLE RD, RB, RA }
+    { BranchGreaterEqualsThan } { BRGE RD, RA, RB  => BRLT RD, RB, RA }
+    { LoadImmediate           } { LDI RD, -264992  => LDHI RD, -364   }
+                                {                     ADDI RD, 364    }
+    { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
+                                {                     ADDI RD, -182   }
+                                {                     LDMR RD, RD, R0 }
+    { --------------------------------------------------------------- }
   );
 
   TRegister = (
@@ -159,7 +173,7 @@ begin
     Registers[regProgramCounter] += 1;
 
     case LOpcode of
-      ocLoadImmediate:
+      ocLoadLowImmediate:
         if LRegD <> regZero then
           Registers[LRegD] := LImmediate;
       ocLoadHighImmediate:
