@@ -24,7 +24,6 @@ uses
 
   R0 - Zero
   R1 - Program counter
-  R2 - Stack pointer
 
   Integer overflow -> crash
 }
@@ -76,7 +75,7 @@ type
     regUser1          =  -1,
     regZero           =   0,
     regProgramCounter =   1,
-    regStackPointer   =   2,
+    regSystem2        =   2,
     regSystem3        =   3,
     regSystem4        =   4,
     regSystem5        =   5,
