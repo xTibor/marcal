@@ -269,17 +269,18 @@ var
 begin
   ProgramCounter := 0;
 
-  OpImm6(ocLoadHighImmediate, regUser11, 14);
-  OpImm6(ocAddImmediateHalf,  regUser11, -206);
-  OpImm6(ocLoadLowImmediate,  regUser1, 0);
-  OpImm6(ocLoadLowImmediate,  regUser2, 0);
-  OpImm6(ocAddImmediateHalf,  regUser1, 1);
-  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4);
-  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);
-  OpImm6(ocLoadHighImmediate, regUser1, -14);
-  OpImm6(ocAddImmediateHalf,  regUser1, 206);
-  OpImm6(ocAddImmediateHalf,  regUser2, 1);
-  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);
+  OpImm6(ocLoadHighImmediate, regUser11, 14);                   { LDI U11, 10000    } {         }
+  OpImm6(ocAddImmediateHalf,  regUser11, -206);                                       {         }
+  OpImm6(ocLoadLowImmediate,  regUser1, 0);                     { LDLI U1, 0        } {         }
+  OpImm6(ocLoadLowImmediate,  regUser2, 0);                     { LDLI U2, 0        } {         }
+  OpImm6(ocAddImmediateHalf,  regUser1, 1);                     { ADHI U1, 1        } { <<<<<<+ }
+  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4); { ADSI U12, S1, 4   } {       ^ }
+  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);  { BRNE U12, U11, U1 } { >>+   ^ }
+  OpImm6(ocLoadHighImmediate, regUser1, -14);                   { LDI U1, -10000    } {   V   ^ }
+  OpImm6(ocAddImmediateHalf,  regUser1, 206);                                         {   V   ^ }
+  OpImm6(ocAddImmediateHalf,  regUser2, 1);                     { ADHI U2, 1        } {   V   ^ }
+  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);           { ADHI S1, -7       } { <<+ >>+ }
+
   OpRgtr(ocReserved13,        regZero, regZero, regZero);
 end;
 
