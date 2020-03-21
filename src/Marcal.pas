@@ -31,25 +31,30 @@ uses
 
 type
   TOpcode = (
-    ocReserved13        = -13,
-    ocReserved12        = -12,
-    ocReserved11        = -11,
-    ocReserved10        = -10,
-    ocReserved9         =  -9,
-    ocReserved8         =  -8,
-    ocReserved7         =  -7,
-    ocReserved6         =  -6,
-    ocReserved5         =  -5,
-    ocReserved4         =  -4,
-    ocReserved3         =  -3,
-    ocReserved2         =  -2,
-    ocReserved1         =  -1,
-    ocNop               =   0,
-    ocLoadHighImmediate =   1,
-    ocAddImmediate      =   2,
-    ocAddRegister       =   3,
-    ocLoadMemory        =   4,
-    ocStoreMemory       =   5
+    ocReserved13           = -13,
+    ocReserved12           = -12,
+    ocReserved11           = -11,
+    ocReserved10           = -10,
+    ocReserved9            =  -9,
+    ocReserved8            =  -8,
+    ocReserved7            =  -7,
+    ocReserved6            =  -6,
+    ocReserved5            =  -5,
+    ocReserved4            =  -4,
+    ocReserved3            =  -3,
+    ocReserved2            =  -2,
+    ocReserved1            =  -1,
+    ocNop                  =   0,
+    ocLoadImmediate        =   1,
+    ocLoadHighImmediate    =   2,
+    ocAddImmediate         =   3,
+    ocAddRegister          =   4,
+    ocLoadMemory           =   5,
+    ocStoreMemory          =   6,
+    ocBranchEquals         =   7,
+    ocBranchNotEquals      =   8,
+    ocBranchLessThan       =   9,
+    ocBranchLessEqualsThan =  10
     { TODO }
   );
 
@@ -150,7 +155,12 @@ begin
   WriteLn(LongTryteToStr(LImmediate), ' (', LImmediate:7, ') ');
   WriteLn();
 
+  AContext.Registers[regProgramCounter] += 1;
+
   case LOpcode of
+    ocLoadImmediate:
+      if LRegD <> regZero then
+        AContext.Registers[LRegD] := LImmediate;
     ocLoadHighImmediate:
       if LRegD <> regZero then
         AContext.Registers[LRegD] := LImmediate * 729; { << 6 }
@@ -165,11 +175,21 @@ begin
         AContext.Registers[LRegD] := AContext.Memory[AContext.Registers[LRegA] + AContext.Registers[LRegB]];
     ocStoreMemory:
       AContext.Memory[AContext.Registers[LRegA] + AContext.Registers[LRegB]] := AContext.Registers[LRegD];
+    ocBranchEquals:
+      if AContext.Registers[LRegA] = AContext.Registers[LRegB] then
+        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
+    ocBranchNotEquals:
+      if AContext.Registers[LRegA] <> AContext.Registers[LRegB] then
+        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
+    ocBranchLessThan:
+      if AContext.Registers[LRegA] < AContext.Registers[LRegB] then
+        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
+    ocBranchLessEqualsThan:
+      if AContext.Registers[LRegA] <= AContext.Registers[LRegB] then
+        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
     ocReserved13:
       AContext.Halt := true;
   end;
-
-  AContext.Registers[regProgramCounter] += 1;
 end;
 
 procedure AssembleProgram(var AContext: TExecutionContext);
@@ -219,11 +239,11 @@ end;
 var
   Context: TExecutionContext;
 begin
-  Write(#$1B'c');
+  {Write(#$1B'c');}
   InitContext(Context);
   AssembleProgram(Context);
   while not Context.Halt do begin
-    Write(#$1B'[1;1H');
+    {Write(#$1B'[1;1H');}
     PrintContext(Context);
     ExecuteContext(Context);
   end;
