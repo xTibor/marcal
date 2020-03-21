@@ -141,54 +141,56 @@ var
   LHalfSplice: THalfSplice;
   LImmediate: THalfTryte;
 begin
-  LProgramCounter := AContext.Memory[AContext.Registers[regProgramCounter]];
-  LShortSplice := LongTryteShortSplice(LProgramCounter);
-  LHalfSplice  := LongTryteHalfSplice(LProgramCounter);
+  with AContext do begin
+    LProgramCounter := Memory[Registers[regProgramCounter]];
+    LShortSplice := LongTryteShortSplice(LProgramCounter);
+    LHalfSplice  := LongTryteHalfSplice(LProgramCounter);
 
-  LOpcode    := TOpcode(LShortSplice[3]);
-  LRegD      := TRegister(LShortSplice[2]);
-  LRegA      := TRegister(LShortSplice[1]);
-  LRegB      := TRegister(LShortSplice[0]);
-  LImmediate := LHalfSplice[0];
+    LOpcode    := TOpcode(LShortSplice[3]);
+    LRegD      := TRegister(LShortSplice[2]);
+    LRegA      := TRegister(LShortSplice[1]);
+    LRegB      := TRegister(LShortSplice[0]);
+    LImmediate := LHalfSplice[0];
 
-  WriteLn(LOpcode, ' ', LRegD, ' ', LRegA, ' ', LRegB);
-  WriteLn(LongTryteToStr(LImmediate), ' (', LImmediate:7, ') ');
-  WriteLn();
+    WriteLn(LOpcode, ' ', LRegD, ' ', LRegA, ' ', LRegB);
+    WriteLn(LongTryteToStr(LImmediate), ' (', LImmediate:7, ') ');
+    WriteLn();
 
-  AContext.Registers[regProgramCounter] += 1;
+    Registers[regProgramCounter] += 1;
 
-  case LOpcode of
-    ocLoadImmediate:
-      if LRegD <> regZero then
-        AContext.Registers[LRegD] := LImmediate;
-    ocLoadHighImmediate:
-      if LRegD <> regZero then
-        AContext.Registers[LRegD] := LImmediate * 729; { << 6 }
-    ocAddImmediate:
-      if LRegD <> regZero then
-        AContext.Registers[LRegD] += LImmediate;
-    ocAddRegister:
-      if LRegD <> regZero then
-        AContext.Registers[LRegD] := AContext.Registers[LRegA] + AContext.Registers[LRegB];
-    ocLoadMemory:
-      if LRegD <> regZero then
-        AContext.Registers[LRegD] := AContext.Memory[AContext.Registers[LRegA] + AContext.Registers[LRegB]];
-    ocStoreMemory:
-      AContext.Memory[AContext.Registers[LRegA] + AContext.Registers[LRegB]] := AContext.Registers[LRegD];
-    ocBranchEquals:
-      if AContext.Registers[LRegA] = AContext.Registers[LRegB] then
-        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
-    ocBranchNotEquals:
-      if AContext.Registers[LRegA] <> AContext.Registers[LRegB] then
-        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
-    ocBranchLessThan:
-      if AContext.Registers[LRegA] < AContext.Registers[LRegB] then
-        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
-    ocBranchLessEqualsThan:
-      if AContext.Registers[LRegA] <= AContext.Registers[LRegB] then
-        AContext.Registers[regProgramCounter] := AContext.Registers[LRegD];
-    ocReserved13:
-      AContext.Halt := true;
+    case LOpcode of
+      ocLoadImmediate:
+        if LRegD <> regZero then
+          Registers[LRegD] := LImmediate;
+      ocLoadHighImmediate:
+        if LRegD <> regZero then
+          Registers[LRegD] := LImmediate * 729; { << 6 }
+      ocAddImmediate:
+        if LRegD <> regZero then
+          Registers[LRegD] += LImmediate;
+      ocAddRegister:
+        if LRegD <> regZero then
+          Registers[LRegD] := Registers[LRegA] + Registers[LRegB];
+      ocLoadMemory:
+        if LRegD <> regZero then
+          Registers[LRegD] := Memory[Registers[LRegA] + Registers[LRegB]];
+      ocStoreMemory:
+        Memory[Registers[LRegA] + Registers[LRegB]] := Registers[LRegD];
+      ocBranchEquals:
+        if Registers[LRegA] = Registers[LRegB] then
+          Registers[regProgramCounter] := Registers[LRegD];
+      ocBranchNotEquals:
+        if Registers[LRegA] <> Registers[LRegB] then
+          Registers[regProgramCounter] := Registers[LRegD];
+      ocBranchLessThan:
+        if Registers[LRegA] < Registers[LRegB] then
+          Registers[regProgramCounter] := Registers[LRegD];
+      ocBranchLessEqualsThan:
+        if Registers[LRegA] <= Registers[LRegB] then
+          Registers[regProgramCounter] := Registers[LRegD];
+      ocReserved13:
+        Halt := true;
+    end;
   end;
 end;
 
@@ -208,7 +210,7 @@ var
 
   procedure OpImm(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfTryte);
   begin
-      AContext.Memory[ProgramCounter] :=
+    AContext.Memory[ProgramCounter] :=
       (LongInt(AOpcode)    * 19683) + { << 9 }
       (LongInt(ARegD)      *   729) + { << 6 }
       (LongInt(AImmediate) *     1);  { << 0 }
