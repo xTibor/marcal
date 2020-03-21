@@ -43,20 +43,19 @@ type
     ocReserved3            =  -3,
     ocReserved2            =  -2,
     ocReserved1            =  -1,
-    ocNop                  =   0,
+    ocAddRegister          =   0,
     ocLoadImmediate        =   1,
     ocLoadHighImmediate    =   2,
     ocAddImmediate         =   3,
-    ocAddRegister          =   4,
-    ocLoadMemory           =   5,
-    ocStoreMemory          =   6,
-    ocBranchEquals         =   7,
-    ocBranchNotEquals      =   8,
-    ocBranchLessThan       =   9,
-    ocBranchLessEqualsThan =  10,
-    ocPush                 =  11,
-    ocPop                  =  12,
-    ocCall                 =  13
+    ocLoadMemory           =   4,
+    ocStoreMemory          =   5,
+    ocBranchEquals         =   6,
+    ocBranchNotEquals      =   7,
+    ocBranchLessThan       =   8,
+    ocBranchLessEqualsThan =   9,
+    ocPush                 =  10,
+    ocPop                  =  11,
+    ocCall                 =  12
   );
 
   TRegister = (
