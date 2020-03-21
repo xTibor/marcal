@@ -54,8 +54,10 @@ type
     ocBranchEquals         =   7,
     ocBranchNotEquals      =   8,
     ocBranchLessThan       =   9,
-    ocBranchLessEqualsThan =  10
-    { TODO }
+    ocBranchLessEqualsThan =  10,
+    ocPush                 =  11,
+    ocPop                  =  12,
+    ocCall                 =  13
   );
 
   TRegister = (
@@ -188,6 +190,22 @@ begin
       ocBranchLessEqualsThan:
         if Registers[LRegA] <= Registers[LRegB] then
           Registers[regProgramCounter] := Registers[LRegD];
+      ocPush: begin
+        Memory[Registers[LRegD]] := Registers[LRegA];
+        if LRegD <> regZero then
+          Registers[LRegD] += 1;
+      end;
+      ocPop: begin
+        if LRegD <> regZero then
+          Registers[LRegD] -= 1;
+        Registers[LRegA] := Memory[Registers[LRegD]];
+      end;
+      ocCall: begin
+        Memory[Registers[LRegD]] := Registers[regProgramCounter];
+        if LRegD <> regZero then
+          Registers[LRegD] += 1;
+        Registers[regProgramCounter] := Registers[LRegA];
+      end;
       ocReserved13:
         Halt := true;
     end;
