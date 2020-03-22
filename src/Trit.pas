@@ -8,51 +8,51 @@ type
 const
   CTritToStr: array[TTrit] of Char = ('-', '0', '+');
 
-{ Monadic operations }
+{ Monadic functions }
 
 type
-  TTritMonadicOp = array[TTrit] of TTrit;
+  TTritMonadicFunction = array[TTrit] of TTrit;
 
 const
-  CTritOpIdentity:    TTritMonadicOp = (-1,  0,  1);
-  CTritOpInvert:      TTritMonadicOp = ( 1,  0, -1);
-  CTritOpIncrement:   TTritMonadicOp = ( 0,  1, -1);
-  CTritOpDecrement:   TTritMonadicOp = ( 1, -1,  0);
-  CTritOpSelectMinus: TTritMonadicOp = ( 1, -1, -1);
-  CTritOpSelectZero:  TTritMonadicOp = (-1,  1, -1);
-  CTritOpSelectPlus:  TTritMonadicOp = (-1, -1,  1);
+  CTritFunctionIdentity:    TTritMonadicFunction = (-1,  0,  1);
+  CTritFunctionNegation:    TTritMonadicFunction = ( 1,  0, -1);
+  CTritFunctionIncrement:   TTritMonadicFunction = ( 0,  1, -1);
+  CTritFunctionDecrement:   TTritMonadicFunction = ( 1, -1,  0);
+  CTritFunctionSelectMinus: TTritMonadicFunction = ( 1, -1, -1);
+  CTritFunctionSelectZero:  TTritMonadicFunction = (-1,  1, -1);
+  CTritFunctionSelectPlus:  TTritMonadicFunction = (-1, -1,  1);
 
-{ Dyadic operations }
+{ Dyadic functions }
 
 type
-  TTritDyadicOp = array[TTrit, TTrit] of TTrit;
+  TTritDyadicFunction = array[TTrit, TTrit] of TTrit;
 
 const
-  CTritOpAnd: TTritDyadicOp = (
+  CTritFunctionAnd: TTritDyadicFunction = (
     (-1, -1, -1),
     (-1,  0,  0),
     (-1,  0,  1)
   );
 
-  CTritOpOr: TTritDyadicOp = (
+  CTritFunctionOr: TTritDyadicFunction = (
     (-1,  0,  1),
     ( 0,  0,  1),
     ( 1,  1,  1)
   );
 
-  CTritOpAddSum: TTritDyadicOp = (
+  CTritFunctionAddSum: TTritDyadicFunction = (
     ( 1, -1,  0),
     (-1,  0,  1),
     ( 0,  1, -1)
   );
 
-  CTritOpAddCarry: TTritDyadicOp = (
+  CTritFunctionAddCarry: TTritDyadicFunction = (
     (-1,  0,  0),
     ( 0,  0,  0),
     ( 0,  0,  1)
   );
 
-  CTritOpEquality: TTritDyadicOp = (
+  CTritFunctionEquality: TTritDyadicFunction = (
     ( 1, -1, -1),
     (-1,  1, -1),
     (-1, -1,  1)

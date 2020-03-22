@@ -47,7 +47,7 @@ type
     ocReserved4            =  -4, { <??> }
     ocReserved3            =  -3, { <??> }
     ocReserved2            =  -2, { <??> }
-    ocReserved1            =  -1, { <??> }
+    ocNegation             =  -1, { RGTR } { NEGR RD, RA     }
     ocAddRegister          =   0, { RGTR } { ADDR RD, RA, RB }
     ocAddImmediateShort    =   1, { IMM3 } { ADSI RD, RA, 12 }
     ocAddImmediateHalf     =   2, { IMM6 } { ADHI RD, 123    }
@@ -179,6 +179,9 @@ begin
     Registers[regProgramCounter] += 1;
 
     case LOpcode of
+      ocNegation:
+        if LRegD <> regZero then
+          Registers[LRegD] := LongTryteApplyFunction(Registers[LRegA], CTritFunctionNegation);
       ocLoadLowImmediate:
         if LRegD <> regZero then
           Registers[LRegD] := LImmediateHalf;
