@@ -74,7 +74,7 @@ type
     ocCall                 =  13  { RGTR } { CALL SP, RA     }
     { Synthesized opcodes ------------------------------------------- }
     { NoOperation             } { NOOP             => ADDR R0, R0, R0 }
-    { Return                  } { RTRN             => POPR SP, PC     }
+    { Return                  } { RTRN SP          => POPR SP, PC     }
     { BranchGreaterThan       } { BRGT RD, RA, RB  => BRLE RD, RB, RA }
     { BranchGreaterEqualsThan } { BRGE RD, RA, RB  => BRLT RD, RB, RA }
     { LoadImmediate           } { LDI RD, -264992  => LDHI RD, -364   }
