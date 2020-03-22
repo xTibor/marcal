@@ -72,6 +72,8 @@ type
     { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
                                 {                     ADHI RD, -182   }
                                 {                     LDMR RD, RD, R0 }
+    { Subtraction             } { SUBR RD, RA, RB  => NEGR RD, RB     }
+                                {                     ADDR RD, RD, RA }
     { --------------------------------------------------------------- }
   );
 
