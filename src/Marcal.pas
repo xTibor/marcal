@@ -31,12 +31,22 @@ uses
   R1 - Program counter
 
   Integer overflow -> crash
+
+  Dyadic functions: DYAD RD, RA, RB
+    In:
+      RD: Register containing the truth table
+      RA: Argument value register
+      RB: Argument value register
+    Out:
+      RD: Output value register
+    RD := TruthTable(RD)[RA, RB]
+    TODO: Truth table representation
 }
 
 type
   TOpcode = (
-    ocReserved13           = -13, { <??> }
-    ocReserved12           = -12, { <??> }
+    ocReserved13           = -13, { <??> } { Port load       }
+    ocReserved12           = -12, { <??> } { Port store      }
     ocReserved11           = -11, { <??> }
     ocReserved10           = -10, { <??> }
     ocReserved9            =  -9, { <??> }
@@ -44,10 +54,10 @@ type
     ocReserved7            =  -7, { <??> }
     ocReserved6            =  -6, { <??> }
     ocReserved5            =  -5, { <??> }
-    ocReserved4            =  -4, { <??> }
-    ocReserved3            =  -3, { <??> }
-    ocReserved2            =  -2, { <??> }
-    ocNegation             =  -1, { RGTR } { NEGR RD, RA     }
+    ocReserved4            =  -4, { <??> } { Rotate          }
+    ocReserved3            =  -3, { <??> } { Shift           }
+    ocNegation             =  -2, { RGTR } { NEGR RD, RA     } { May be removed in favour of ocDyadicFunction }
+    ocDyadicFunction       =  -1, { RGTR } { DYAD RD, RA, RB }
     ocAddRegister          =   0, { RGTR } { ADDR RD, RA, RB }
     ocAddImmediateShort    =   1, { IMM3 } { ADSI RD, RA, 12 }
     ocAddImmediateHalf     =   2, { IMM6 } { ADHI RD, 123    }
@@ -56,7 +66,7 @@ type
     ocLoadMemory           =   5, { RGTR } { LDMR RD, RA, RB }
     ocStoreMemory          =   6, { RGTR } { STMR RD, RA, RB }
     ocBranchEquals         =   7, { RGTR } { BREQ RD, RA, RB }
-    ocBranchNotEquals      =   8, { RGTR } { BRNE RD, RA, RB }
+    ocBranchNotEquals      =   8, { RGTR } { BRNE RD, RA, RB } { May be removed in favour of ocBranchEquals }
     ocBranchLessThan       =   9, { RGTR } { BRLT RD, RA, RB }
     ocBranchLessEqualsThan =  10, { RGTR } { BRLE RD, RA, RB }
     ocPush                 =  11, { RGTR } { PSHR SP, RA     }
@@ -72,8 +82,16 @@ type
     { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
                                 {                     ADHI RD, -182   }
                                 {                     LDMR RD, RD, R0 }
+    { LogicalAnd              } { LAND RD, RA, RB  => LDHI RD, 000--- }
+                                {                     ADHI RD, -00-0+ }
+                                {                     DYAD RD, RA, RB }
+    { LogicalOr               } { LOR RD, RA, RB   => LDHI RD, 000-0+ }
+                                {                     ADHI RD, 00++++ }
+                                {                     DYAD RD, RA, RB }
     { Subtraction             } { SUBR RD, RA, RB  => NEGR RD, RB     }
                                 {                     ADDR RD, RD, RA }
+    { StackRelativeLoad       } { STCK SP, RD, -1  => ADSI RD, SP, -1 }
+                                {                     LDMR RD, RD, R0 }
     { --------------------------------------------------------------- }
   );
 
@@ -231,6 +249,9 @@ begin
         if LRegD <> regZero then
           Registers[LRegD] += 1;
         Registers[regProgramCounter] := Registers[LRegA];
+      end;
+      ocDyadicFunction: begin
+        { TODO }
       end;
       ocReserved13:
         Halt := true;
