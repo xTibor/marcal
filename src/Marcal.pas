@@ -39,8 +39,14 @@ uses
       RB: Argument value register
     Out:
       RD: Output value register
-    RD := TruthTable(RD)[RA, RB]
-    TODO: Truth table representation
+      RD := TruthTable(RD)[RA, RB]
+    Truth table representation:
+            RA RA RA
+            [-][0][+]
+      RB [-] a  b  c
+      RB [0] d  e  f
+      RB [+] g  h  i
+      where RD := [000ihgfedcba]
 }
 
 type
@@ -82,11 +88,11 @@ type
     { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
                                 {                     ADHI RD, -182   }
                                 {                     LDMR RD, RD, R0 }
-    { LogicalAnd              } { LAND RD, RA, RB  => LDHI RD, 000--- }
-                                {                     ADHI RD, -00-0+ }
+    { LogicalAnd              } { LAND RD, RA, RB  => LDHI RD, 8      }
+                                {                     ADHI RD, -40    }
                                 {                     DYAD RD, RA, RB }
-    { LogicalOr               } { LOR RD, RA, RB   => LDHI RD, 000-0+ }
-                                {                     ADHI RD, 00++++ }
+    { LogicalOr               } { LOR RD, RA, RB   => LDHI RD, 13     }
+                                {                     ADHI RD, 251    }
                                 {                     DYAD RD, RA, RB }
     { Subtraction             } { SUBR RD, RA, RB  => NEGR RD, RB     }
                                 {                     ADDR RD, RD, RA }
