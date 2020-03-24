@@ -16,14 +16,16 @@ uses
 
 { MARCAL }
 {
-  000 000 000 +--
-  OP  RD  RA  RB
-
-  000 000 000 000
-  OP  RD  RA  IMM
-
-  000 000 000 000
-  OP  RD  IMM-IMM
+  Instruction formats:
+    RGTR:
+      000 000 000 +--
+      OP  RD  RA  RB
+    IMM3:
+      000 000 000 000
+      OP  RD  RA  IMM
+    IMM6:
+      000 000 000 000
+      OP  RD  IMM-IMM
 
   When registers or immediate arguments not present, use implicit 0 arguments.
 
@@ -32,7 +34,7 @@ uses
 
   Integer overflow -> crash
 
-  Dyadic functions: DYAD RD, RA, RB
+  Dyadic functions: DYAD RD RA RB
     In:
       RD: Register containing the truth table
       RA: Argument value register
@@ -51,64 +53,64 @@ uses
 
 type
   TOpcode = (
-    ocReserved13           = -13, { <??> - Port load       }
-    ocReserved12           = -12, { <??> - Port store      }
-    ocReserved11           = -11, { <??> - Undefined       }
-    ocReserved10           = -10, { <??> - Undefined       }
-    ocReserved9            =  -9, { <??> - Undefined       }
-    ocReserved8            =  -8, { <??> - Undefined       }
-    ocReserved7            =  -7, { <??> - Undefined       }
-    ocReserved6            =  -6, { <??> - Undefined       }
-    ocReserved5            =  -5, { <??> - Undefined       }
-    ocReserved4            =  -4, { <??> - Rotate          }
-    ocReserved3            =  -3, { <??> - Shift           }
-    ocNegation             =  -2, { RGTR - NEGR RD, RA     }
-    ocDyadicFunction       =  -1, { RGTR - DYAD RD, RA, RB }
-    ocAddRegister          =   0, { RGTR - ADDR RD, RA, RB }
-    ocAddImmediateShort    =   1, { IMM3 - ADSI RD, RA, 12 }
-    ocAddImmediateHalf     =   2, { IMM6 - ADHI RD, 123    }
-    ocLoadLowImmediate     =   3, { IMM6 - LDLI RD, 123    }
-    ocLoadHighImmediate    =   4, { IMM6 - LDHI RD, 123    }
-    ocLoadMemory           =   5, { RGTR - LDMR RD, RA, RB }
-    ocStoreMemory          =   6, { RGTR - STMR RD, RA, RB }
-    ocBranchEquals         =   7, { RGTR - BREQ RD, RA, RB }
-    ocBranchNotEquals      =   8, { RGTR - BRNE RD, RA, RB }
-    ocBranchLessThan       =   9, { RGTR - BRLT RD, RA, RB }
-    ocBranchLessEqualsThan =  10, { RGTR - BRLE RD, RA, RB }
-    ocPush                 =  11, { RGTR - PSHR SP, RA     }
-    ocPop                  =  12, { RGTR - POPR SP, RA     }
-    ocCall                 =  13  { RGTR - CALL SP, RA     }
+    ocReserved13           = -13, { <??> - Port load     }
+    ocReserved12           = -12, { <??> - Port store    }
+    ocReserved11           = -11, { <??> - Undefined     }
+    ocReserved10           = -10, { <??> - Undefined     }
+    ocReserved9            =  -9, { <??> - Undefined     }
+    ocReserved8            =  -8, { <??> - Undefined     }
+    ocReserved7            =  -7, { <??> - Undefined     }
+    ocReserved6            =  -6, { <??> - Undefined     }
+    ocReserved5            =  -5, { <??> - Undefined     }
+    ocReserved4            =  -4, { <??> - Rotate        }
+    ocReserved3            =  -3, { <??> - Shift         }
+    ocNegation             =  -2, { RGTR - NEGR RD RA    }
+    ocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
+    ocAddRegister          =   0, { RGTR - ADDR RD RA RB }
+    ocAddImmediateShort    =   1, { IMM3 - ADSI RD RA 12 }
+    ocAddImmediateHalf     =   2, { IMM6 - ADHI RD 123   }
+    ocLoadLowImmediate     =   3, { IMM6 - LDLI RD 123   }
+    ocLoadHighImmediate    =   4, { IMM6 - LDHI RD 123   }
+    ocLoadMemory           =   5, { RGTR - LDMR RD RA RB }
+    ocStoreMemory          =   6, { RGTR - STMR RD RA RB }
+    ocBranchEquals         =   7, { RGTR - BREQ RD RA RB }
+    ocBranchNotEquals      =   8, { RGTR - BRNE RD RA RB }
+    ocBranchLessThan       =   9, { RGTR - BRLT RD RA RB }
+    ocBranchLessEqualsThan =  10, { RGTR - BRLE RD RA RB }
+    ocPush                 =  11, { RGTR - PSHR SP RA    }
+    ocPop                  =  12, { RGTR - POPR SP RA    }
+    ocCall                 =  13  { RGTR - CALL SP RA    }
     { Pseudo opcodes
-      NoOperation              NOOP            => ADDR R0, R0, R0
+      NoOperation              NOOP            => ADDR R0 R0 R0
 
-      Move                     MOVR RD, RA     => ADDR RD, RA, R0
+      Move                     MOVR RD RA      => ADDR RD RA R0
 
-      Return                   RTRN SP         => POPR SP, PC
+      Return                   RTRN SP         => POPR SP PC
 
-      BranchGreaterThan        BRGT RD, RA, RB => BRLE RD, RB, RA
+      BranchGreaterThan        BRGT RD RA RB   => BRLE RD RB RA
 
-      BranchGreaterEqualsThan  BRGE RD, RA, RB => BRLT RD, RB, RA
+      BranchGreaterEqualsThan  BRGE RD RA RB   => BRLT RD RB RA
 
-      LoadImmediate            LDI RD, -264992 => LDHI RD, -364
-                                                  ADHI RD, 364
+      LoadImmediate            LDI RD -264992  => LDHI RD -364
+                                                  ADHI RD 364
 
-      LoadMemory               LDM RD, 212686  => LDHI RD, 292
-                                                  ADHI RD, -182
-                                                  LDMR RD, RD, R0
+      LoadMemory               LDM RD 212686   => LDHI RD 292
+                                                  ADHI RD -182
+                                                  LDMR RD RD R0
 
-      LogicalAnd               LAND RD, RA, RB => LDHI RD, 8
-                                                  ADHI RD, -40
-                                                  DYAD RD, RA, RB
+      LogicalAnd               LAND RD RA RB   => LDHI RD 8
+                                                  ADHI RD -40
+                                                  DYAD RD RA RB
 
-      LogicalOr                LOR RD, RA, RB  => LDHI RD, 13
-                                                  ADHI RD, 251
-                                                  DYAD RD, RA, RB
+      LogicalOr                LOR RD RA RB    => LDHI RD 13
+                                                  ADHI RD 251
+                                                  DYAD RD RA RB
 
-      Subtraction              SUBR RD, RA, RB => NEGR RD, RB
-                                                  ADDR RD, RD, RA
+      Subtraction              SUBR RD RA RB   => NEGR RD RB
+                                                  ADDR RD RD RA
 
-      StackRelativeLoad        STCK SP, RD, -1 => ADSI RD, SP, -1
-                                                  LDMR RD, RD, R0
+      StackRelativeLoad        STCK SP RD -1   => ADSI RD SP -1
+                                                  LDMR RD RD R0
     }
   );
 
@@ -317,28 +319,28 @@ begin
   ProgramCounter := 0;
 
   (*
-  OpImm6(ocLoadHighImmediate, regUser11, 14);                   { LDI U11, 10000    } {         }
+  OpImm6(ocLoadHighImmediate, regUser11, 14);                   { LDI U11 10000     } {         }
   OpImm6(ocAddImmediateHalf,  regUser11, -206);                                       {         }
-  OpImm6(ocLoadLowImmediate,  regUser1, 0);                     { LDLI U1, 0        } {         }
-  OpImm6(ocLoadLowImmediate,  regUser2, 0);                     { LDLI U2, 0        } {         }
-  OpImm6(ocAddImmediateHalf,  regUser1, 1);                     { ADHI U1, 1        } { <<<<<<+ }
-  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4); { ADSI U12, S1, 4   } {       ^ }
-  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);  { BRNE U12, U11, U1 } { >>+   ^ }
-  OpImm6(ocLoadHighImmediate, regUser1, -14);                   { LDI U1, -10000    } {   V   ^ }
+  OpImm6(ocLoadLowImmediate,  regUser1, 0);                     { LDLI U1 0         } {         }
+  OpImm6(ocLoadLowImmediate,  regUser2, 0);                     { LDLI U2 0         } {         }
+  OpImm6(ocAddImmediateHalf,  regUser1, 1);                     { ADHI U1 1         } { <<<<<<+ }
+  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4); { ADSI U12 S1 4     } {       ^ }
+  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);  { BRNE U12 U11 U1   } { >>+   ^ }
+  OpImm6(ocLoadHighImmediate, regUser1, -14);                   { LDI U1 -10000     } {   V   ^ }
   OpImm6(ocAddImmediateHalf,  regUser1, 206);                                         {   V   ^ }
-  OpImm6(ocAddImmediateHalf,  regUser2, 1);                     { ADHI U2, 1        } {   V   ^ }
-  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);           { ADHI S1, -7       } { <<+ >>+ }
+  OpImm6(ocAddImmediateHalf,  regUser2, 1);                     { ADHI U2 1         } {   V   ^ }
+  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);           { ADHI S1 -7        } { <<+ >>+ }
   // *)
 
   // (*
-  OpImm6(ocLoadHighImmediate, regUser1, 13);                    { LDI U1, 9464      } { LOAD OPERAND A: 000+++000---             }
+  OpImm6(ocLoadHighImmediate, regUser1, 13);                    { LDI U1 9464       } { LOAD OPERAND A: 000+++000---             }
   OpImm6(ocAddImmediateHalf,  regUser1, -13);
-  OpImm6(ocLoadHighImmediate, regUser2, 224);                   { LDI U2, 163520    } { LOAD OPERAND B: +0-+0-+0-+0-             }
+  OpImm6(ocLoadHighImmediate, regUser2, 224);                   { LDI U2 163520     } { LOAD OPERAND B: +0-+0-+0-+0-             }
   OpImm6(ocAddImmediateHalf,  regUser2, 224);
-  OpImm6(ocLoadHighImmediate, regUser10, 5);                    { LDI U10, 3445     } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
+  OpImm6(ocLoadHighImmediate, regUser10, 5);                    { LDI U10 3445      } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
   OpImm6(ocAddImmediateHalf,  regUser10, -200);
-  OpRgtr(ocAddRegister,       regUser3, regUser10, regZero);    { MOVR U3, U10      } { MOVE TRUTH TABLE TO DESTINATION REGISTER }
-  OpRgtr(ocDyadicFunction,    regUser3, regUser1, regUser2);    { DYAD U3, U1, U2   } { PERFORM TRITWISE EQUALITY OPERATION      }
+  OpRgtr(ocAddRegister,       regUser3, regUser10, regZero);    { MOVR U3 U10       } { MOVE TRUTH TABLE TO DESTINATION REGISTER }
+  OpRgtr(ocDyadicFunction,    regUser3, regUser1, regUser2);    { DYAD U3 U1 U2     } { PERFORM TRITWISE EQUALITY OPERATION      }
   OpRgtr(ocReserved13,        regZero, regZero, regZero);       { HALT              }
   // *)
 end;
