@@ -41,11 +41,11 @@ uses
       RD: Output value register
       RD := TruthTable(RD)[RA, RB]
     Truth table representation:
-            RA RA RA
+            RB RB RB
             [-][0][+]
-      RB [-] a  b  c
-      RB [0] d  e  f
-      RB [+] g  h  i
+      RA [-] a  b  c
+      RA [0] d  e  f
+      RA [+] g  h  i
       where RD := [000ihgfedcba]
 }
 
@@ -208,7 +208,7 @@ begin
     case LOpcode of
       ocNegation:
         if LRegD <> regZero then
-          Registers[LRegD] := LongTryteApplyFunction(Registers[LRegA], CTritFunctionNegation);
+          Registers[LRegD] := LongTryteApplyMonadicFunction(Registers[LRegA], CTritFunctionNegation);
       ocLoadLowImmediate:
         if LRegD <> regZero then
           Registers[LRegD] := LImmediateHalf;
@@ -258,7 +258,11 @@ begin
         Registers[regProgramCounter] := Registers[LRegA];
       end;
       ocDyadicFunction: begin
-        { TODO }
+        if LRegD <> regZero then
+          Registers[LRegD] := LongTryteApplyDyadicFunction(
+            Registers[LRegA],
+            Registers[LRegB],
+            LongTryteToDyadicFunction(Registers[LRegD]));
       end;
       ocReserved13:
         Halt := true;
@@ -302,6 +306,7 @@ var
 begin
   ProgramCounter := 0;
 
+  (*
   OpImm6(ocLoadHighImmediate, regUser11, 14);                   { LDI U11, 10000    } {         }
   OpImm6(ocAddImmediateHalf,  regUser11, -206);                                       {         }
   OpImm6(ocLoadLowImmediate,  regUser1, 0);                     { LDLI U1, 0        } {         }
@@ -313,8 +318,19 @@ begin
   OpImm6(ocAddImmediateHalf,  regUser1, 206);                                         {   V   ^ }
   OpImm6(ocAddImmediateHalf,  regUser2, 1);                     { ADHI U2, 1        } {   V   ^ }
   OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);           { ADHI S1, -7       } { <<+ >>+ }
+  // *)
 
-  OpRgtr(ocReserved13,        regZero, regZero, regZero);
+  // (*
+  OpImm6(ocLoadHighImmediate, regUser1, 13);                    { LDI U1, 9464      } { LOAD OPERAND A: 000+++000---             }
+  OpImm6(ocAddImmediateHalf,  regUser1, -13);
+  OpImm6(ocLoadHighImmediate, regUser2, 224);                   { LDI U2, 163520    } { LOAD OPERAND B: +0-+0-+0-+0-             }
+  OpImm6(ocAddImmediateHalf,  regUser2, 224);
+  OpImm6(ocLoadHighImmediate, regUser10, 5);                    { LDI U10, 3445     } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
+  OpImm6(ocAddImmediateHalf,  regUser10, -200);
+  OpRgtr(ocAddRegister,       regUser3, regUser10, regZero);    { MOVR U3, U10      } { MOVE TRUTH TABLE TO DESTINATION REGISTER }
+  OpRgtr(ocDyadicFunction,    regUser3, regUser1, regUser2);    { DYAD U3, U1, U2   } { PERFORM TRITWISE EQUALITY OPERATION      }
+  OpRgtr(ocReserved13,        regZero, regZero, regZero);       { HALT              }
+  // *)
 end;
 
 var

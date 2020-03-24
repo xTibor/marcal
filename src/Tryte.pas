@@ -14,7 +14,8 @@ type
 function TryteEncode(ATryteBits: TTryteTrits; ATritCount: Integer): TTryte;
 function TryteDecode(ATryte: TTryte; ATritCount: Integer): TTryteTrits;
 function TryteToStr(ATryte: TTryte; ATritCount: Integer): String;
-function TryteApplyFunction(ATryte: TTryte; ATritCount: Integer; AFunction: TTritMonadicFunction): TTryte;
+function TryteApplyMonadicFunction(ATryte: TTryte; ATritCount: Integer; AFunction: TTritMonadicFunction): TTryte;
+function TryteApplyDyadicFunction(ATryteA: TTryte; ATryteB: TTryte; ATritCount: Integer; AFunction: TTritDyadicFunction): TTryte;
 
 { Short tryte }
 
@@ -26,7 +27,8 @@ type
 function ShortTryteEncode(ATryteBits: TTryteTrits): TShortTryte;
 function ShortTryteDecode(ATryte: TShortTryte): TTryteTrits;
 function ShortTryteToStr(ATryte: TShortTryte): String;
-function ShortTryteApplyFunction(ATryte: TShortTryte; AFunction: TTritMonadicFunction): TShortTryte;
+function ShortTryteApplyMonadicFunction(ATryte: TShortTryte; AFunction: TTritMonadicFunction): TShortTryte;
+function ShortTryteApplyDyadicFunction(ATryteA: TShortTryte; ATryteB: TShortTryte; AFunction: TTritDyadicFunction): TShortTryte;
 
 { Half tryte }
 
@@ -38,7 +40,8 @@ type
 function HalfTryteEncode(ATryteBits: TTryteTrits): THalfTryte;
 function HalfTryteDecode(ATryte: THalfTryte): TTryteTrits;
 function HalfTryteToStr(ATryte: THalfTryte): String;
-function HalfTryteApplyFunction(ATryte: THalfTryte; AFunction: TTritMonadicFunction): THalfTryte;
+function HalfTryteApplyMonadicFunction(ATryte: THalfTryte; AFunction: TTritMonadicFunction): THalfTryte;
+function HalfTryteApplyDyadicFunction(ATryteA: THalfTryte; ATryteB: THalfTryte; AFunction: TTritDyadicFunction): THalfTryte;
 
 { Long tryte }
 
@@ -50,7 +53,9 @@ type
 function LongTryteEncode(ATryteBits: TTryteTrits): TLongTryte;
 function LongTryteDecode(ATryte: TLongTryte): TTryteTrits;
 function LongTryteToStr(ATryte: TLongTryte): String;
-function LongTryteApplyFunction(ATryte: TLongTryte; AFunction: TTritMonadicFunction): TLongTryte;
+function LongTryteApplyMonadicFunction(ATryte: TLongTryte; AFunction: TTritMonadicFunction): TLongTryte;
+function LongTryteApplyDyadicFunction(ATryteA: TLongTryte; ATryteB: TLongTryte; AFunction: TTritDyadicFunction): TLongTryte;
+
 
 type
   TShortSplice = array[0..3] of TShortTryte;
@@ -58,6 +63,7 @@ type
 
 function LongTryteShortSplice(ATryte: TLongTryte): TShortSplice;
 function LongTryteHalfSplice(ATryte: TLongTryte): THalfSplice;
+function LongTryteToDyadicFunction(ATryte: TLongTryte): TTritDyadicFunction;
 
 implementation
 
@@ -116,15 +122,33 @@ begin
   TryteToStr += ']';
 end;
 
-function TryteApplyFunction(ATryte: TTryte; ATritCount: Integer; AFunction: TTritMonadicFunction): TTryte;
+function TryteApplyMonadicFunction(ATryte: TTryte; ATritCount: Integer; AFunction: TTritMonadicFunction): TTryte;
 var
   LIndex: Integer;
   LTrits: TTryteTrits;
 begin
   LTrits := TryteDecode(ATryte, ATritCount);
+
   for LIndex := 0 to ATritCount - 1 do
     LTrits[LIndex] := AFunction[LTrits[LIndex]];
-  TryteApplyFunction := TryteEncode(LTrits, ATritCount);
+
+  TryteApplyMonadicFunction := TryteEncode(LTrits, ATritCount);
+end;
+
+function TryteApplyDyadicFunction(ATryteA: TTryte; ATryteB: TTryte; ATritCount: Integer; AFunction: TTritDyadicFunction): TTryte;
+var
+  LIndex: Integer;
+  LTritsA, LTritsB: TTryteTrits;
+  LTritsResult: TTryteTrits;
+begin
+  LTritsA := TryteDecode(ATryteA, ATritCount);
+  LTritsB := TryteDecode(ATryteB, ATritCount);
+  SetLength(LTritsResult, ATritCount);
+
+  for LIndex := 0 to ATritCount - 1 do
+    LTritsResult[LIndex] := AFunction[LTritsA[LIndex], LTritsB[LIndex]];
+
+  TryteApplyDyadicFunction := TryteEncode(LTritsResult, ATritCount);
 end;
 
 { Short tryte }
@@ -144,9 +168,14 @@ begin
   ShortTryteToStr := TryteToStr(ATryte, CShortTryteTritCount);
 end;
 
-function ShortTryteApplyFunction(ATryte: TShortTryte; AFunction: TTritMonadicFunction): TShortTryte;
+function ShortTryteApplyMonadicFunction(ATryte: TShortTryte; AFunction: TTritMonadicFunction): TShortTryte;
 begin
-  ShortTryteApplyFunction := TryteApplyFunction(ATryte, CShortTryteTritCount, AFunction);
+  ShortTryteApplyMonadicFunction := TryteApplyMonadicFunction(ATryte, CShortTryteTritCount, AFunction);
+end;
+
+function ShortTryteApplyDyadicFunction(ATryteA: TShortTryte; ATryteB: TShortTryte; AFunction: TTritDyadicFunction): TShortTryte;
+begin
+  ShortTryteApplyDyadicFunction := TryteApplyDyadicFunction(ATryteA, ATryteB, CShortTryteTritCount, AFunction);
 end;
 
 { Half tryte }
@@ -166,9 +195,14 @@ begin
   HalfTryteToStr := TryteToStr(ATryte, CHalfTryteTritCount);
 end;
 
-function HalfTryteApplyFunction(ATryte: THalfTryte; AFunction: TTritMonadicFunction): THalfTryte;
+function HalfTryteApplyMonadicFunction(ATryte: THalfTryte; AFunction: TTritMonadicFunction): THalfTryte;
 begin
-  HalfTryteApplyFunction := TryteApplyFunction(ATryte, CHalfTryteTritCount, AFunction);
+  HalfTryteApplyMonadicFunction := TryteApplyMonadicFunction(ATryte, CHalfTryteTritCount, AFunction);
+end;
+
+function HalfTryteApplyDyadicFunction(ATryteA: THalfTryte; ATryteB: THalfTryte; AFunction: TTritDyadicFunction): THalfTryte;
+begin
+  HalfTryteApplyDyadicFunction := TryteApplyDyadicFunction(ATryteA, ATryteB, CHalfTryteTritCount, AFunction);
 end;
 
 { Long tryte }
@@ -188,9 +222,14 @@ begin
   LongTryteToStr := TryteToStr(ATryte, CLongTryteTritCount);
 end;
 
-function LongTryteApplyFunction(ATryte: TLongTryte; AFunction: TTritMonadicFunction): TLongTryte;
+function LongTryteApplyMonadicFunction(ATryte: TLongTryte; AFunction: TTritMonadicFunction): TLongTryte;
 begin
-  LongTryteApplyFunction := TryteApplyFunction(ATryte, CLongTryteTritCount, AFunction);
+  LongTryteApplyMonadicFunction := TryteApplyMonadicFunction(ATryte, CLongTryteTritCount, AFunction);
+end;
+
+function LongTryteApplyDyadicFunction(ATryteA: TLongTryte; ATryteB: TLongTryte; AFunction: TTritDyadicFunction): TLongTryte;
+begin
+  LongTryteApplyDyadicFunction := TryteApplyDyadicFunction(ATryteA, ATryteB, CLongTryteTritCount, AFunction);
 end;
 
 function LongTryteShortSplice(ATryte: TLongTryte): TShortSplice;
@@ -213,6 +252,23 @@ begin
   for LIndex := Low(THalfSplice) to High(THalfSplice) do
     LongTryteHalfSplice[LIndex] := HalfTryteEncode(
       Copy(LTrits, LIndex * CHalfTryteTritCount, CHalfTryteTritCount));
+end;
+
+function LongTryteToDyadicFunction(ATryte: TLongTryte): TTritDyadicFunction;
+var
+  LIndex: Integer;
+  LTrits: TTryteTrits;
+  LTritA, LTritB: TTrit;
+begin
+  LTrits := LongTryteDecode(ATryte);
+
+  LIndex := 0;
+  for LTritA := Low(TTrit) to High(TTrit) do begin
+    for LTritB := Low(TTrit) to High(TTrit) do begin
+      LongTryteToDyadicFunction[LTritA, LTritB] := LTrits[LIndex];
+      LIndex := LIndex + 1;
+    end;
+  end;
 end;
 
 end.
