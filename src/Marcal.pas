@@ -51,55 +51,65 @@ uses
 
 type
   TOpcode = (
-    ocReserved13           = -13, { <??> } { Port load       }
-    ocReserved12           = -12, { <??> } { Port store      }
-    ocReserved11           = -11, { <??> }
-    ocReserved10           = -10, { <??> }
-    ocReserved9            =  -9, { <??> }
-    ocReserved8            =  -8, { <??> }
-    ocReserved7            =  -7, { <??> }
-    ocReserved6            =  -6, { <??> }
-    ocReserved5            =  -5, { <??> }
-    ocReserved4            =  -4, { <??> } { Rotate          }
-    ocReserved3            =  -3, { <??> } { Shift           }
-    ocNegation             =  -2, { RGTR } { NEGR RD, RA     } { May be removed in favour of ocDyadicFunction }
-    ocDyadicFunction       =  -1, { RGTR } { DYAD RD, RA, RB }
-    ocAddRegister          =   0, { RGTR } { ADDR RD, RA, RB }
-    ocAddImmediateShort    =   1, { IMM3 } { ADSI RD, RA, 12 }
-    ocAddImmediateHalf     =   2, { IMM6 } { ADHI RD, 123    }
-    ocLoadLowImmediate     =   3, { IMM6 } { LDLI RD, 123    }
-    ocLoadHighImmediate    =   4, { IMM6 } { LDHI RD, 123    }
-    ocLoadMemory           =   5, { RGTR } { LDMR RD, RA, RB }
-    ocStoreMemory          =   6, { RGTR } { STMR RD, RA, RB }
-    ocBranchEquals         =   7, { RGTR } { BREQ RD, RA, RB }
-    ocBranchNotEquals      =   8, { RGTR } { BRNE RD, RA, RB } { May be removed in favour of ocBranchEquals }
-    ocBranchLessThan       =   9, { RGTR } { BRLT RD, RA, RB }
-    ocBranchLessEqualsThan =  10, { RGTR } { BRLE RD, RA, RB }
-    ocPush                 =  11, { RGTR } { PSHR SP, RA     }
-    ocPop                  =  12, { RGTR } { POPR SP, RA     }
-    ocCall                 =  13  { RGTR } { CALL SP, RA     }
-    { Synthesized opcodes ------------------------------------------- }
-    { NoOperation             } { NOOP             => ADDR R0, R0, R0 }
-    { Move                    } { MOVR RD, RA      => ADDR RD, RA, R0 }
-    { Return                  } { RTRN SP          => POPR SP, PC     }
-    { BranchGreaterThan       } { BRGT RD, RA, RB  => BRLE RD, RB, RA }
-    { BranchGreaterEqualsThan } { BRGE RD, RA, RB  => BRLT RD, RB, RA }
-    { LoadImmediate           } { LDI RD, -264992  => LDHI RD, -364   }
-                                {                     ADHI RD, 364    }
-    { LoadMemory              } { LDM RD, 212686   => LDHI RD, 292    }
-                                {                     ADHI RD, -182   }
-                                {                     LDMR RD, RD, R0 }
-    { LogicalAnd              } { LAND RD, RA, RB  => LDHI RD, 8      }
-                                {                     ADHI RD, -40    }
-                                {                     DYAD RD, RA, RB }
-    { LogicalOr               } { LOR RD, RA, RB   => LDHI RD, 13     }
-                                {                     ADHI RD, 251    }
-                                {                     DYAD RD, RA, RB }
-    { Subtraction             } { SUBR RD, RA, RB  => NEGR RD, RB     }
-                                {                     ADDR RD, RD, RA }
-    { StackRelativeLoad       } { STCK SP, RD, -1  => ADSI RD, SP, -1 }
-                                {                     LDMR RD, RD, R0 }
-    { --------------------------------------------------------------- }
+    ocReserved13           = -13, { <??> - Port load       }
+    ocReserved12           = -12, { <??> - Port store      }
+    ocReserved11           = -11, { <??> - Undefined       }
+    ocReserved10           = -10, { <??> - Undefined       }
+    ocReserved9            =  -9, { <??> - Undefined       }
+    ocReserved8            =  -8, { <??> - Undefined       }
+    ocReserved7            =  -7, { <??> - Undefined       }
+    ocReserved6            =  -6, { <??> - Undefined       }
+    ocReserved5            =  -5, { <??> - Undefined       }
+    ocReserved4            =  -4, { <??> - Rotate          }
+    ocReserved3            =  -3, { <??> - Shift           }
+    ocNegation             =  -2, { RGTR - NEGR RD, RA     }
+    ocDyadicFunction       =  -1, { RGTR - DYAD RD, RA, RB }
+    ocAddRegister          =   0, { RGTR - ADDR RD, RA, RB }
+    ocAddImmediateShort    =   1, { IMM3 - ADSI RD, RA, 12 }
+    ocAddImmediateHalf     =   2, { IMM6 - ADHI RD, 123    }
+    ocLoadLowImmediate     =   3, { IMM6 - LDLI RD, 123    }
+    ocLoadHighImmediate    =   4, { IMM6 - LDHI RD, 123    }
+    ocLoadMemory           =   5, { RGTR - LDMR RD, RA, RB }
+    ocStoreMemory          =   6, { RGTR - STMR RD, RA, RB }
+    ocBranchEquals         =   7, { RGTR - BREQ RD, RA, RB }
+    ocBranchNotEquals      =   8, { RGTR - BRNE RD, RA, RB }
+    ocBranchLessThan       =   9, { RGTR - BRLT RD, RA, RB }
+    ocBranchLessEqualsThan =  10, { RGTR - BRLE RD, RA, RB }
+    ocPush                 =  11, { RGTR - PSHR SP, RA     }
+    ocPop                  =  12, { RGTR - POPR SP, RA     }
+    ocCall                 =  13  { RGTR - CALL SP, RA     }
+    { Pseudo opcodes
+      NoOperation              NOOP            => ADDR R0, R0, R0
+
+      Move                     MOVR RD, RA     => ADDR RD, RA, R0
+
+      Return                   RTRN SP         => POPR SP, PC
+
+      BranchGreaterThan        BRGT RD, RA, RB => BRLE RD, RB, RA
+
+      BranchGreaterEqualsThan  BRGE RD, RA, RB => BRLT RD, RB, RA
+
+      LoadImmediate            LDI RD, -264992 => LDHI RD, -364
+                                                  ADHI RD, 364
+
+      LoadMemory               LDM RD, 212686  => LDHI RD, 292
+                                                  ADHI RD, -182
+                                                  LDMR RD, RD, R0
+
+      LogicalAnd               LAND RD, RA, RB => LDHI RD, 8
+                                                  ADHI RD, -40
+                                                  DYAD RD, RA, RB
+
+      LogicalOr                LOR RD, RA, RB  => LDHI RD, 13
+                                                  ADHI RD, 251
+                                                  DYAD RD, RA, RB
+
+      Subtraction              SUBR RD, RA, RB => NEGR RD, RB
+                                                  ADDR RD, RD, RA
+
+      StackRelativeLoad        STCK SP, RD, -1 => ADSI RD, SP, -1
+                                                  LDMR RD, RD, R0
+    }
   );
 
   TRegister = (
