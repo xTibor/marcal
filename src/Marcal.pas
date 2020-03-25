@@ -49,6 +49,10 @@ uses
       RA [0] d  e  f
       RA [+] g  h  i
       where RD := [000ihgfedcba]
+
+  Shift/Rotate:
+    Operates in a +12 .. -12 range
+    Outside it has an undefined behaviour
 }
 
 type
@@ -62,8 +66,8 @@ type
     ocReserved7            =  -7, { <??> - Undefined     }
     ocReserved6            =  -6, { <??> - Undefined     }
     ocReserved5            =  -5, { <??> - Undefined     }
-    ocReserved4            =  -4, { <??> - Rotate        }
-    ocReserved3            =  -3, { <??> - Shift         }
+    ocRotate               =  -4, { RGTR - ROTR RD RA RB }
+    ocShift                =  -3, { RGTR - SHFT RD RA RB }
     ocNegation             =  -2, { RGTR - NEGR RD RA    }
     ocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
     ocAddRegister          =   0, { RGTR - ADDR RD RA RB }
@@ -276,6 +280,12 @@ begin
             Registers[LRegB],
             LongTryteToDyadicFunction(Registers[LRegD]));
       end;
+      ocShift:
+        if LRegD <> regZero then
+          Registers[LRegD] := LongTryteShift(Registers[LRegA], Registers[LRegB]);
+      ocRotate:
+        if LRegD <> regZero then
+          Registers[LRegD] := LongTryteRotate(Registers[LRegA], Registers[LRegB]);
       ocReserved13:
         Halt := true;
     end;
@@ -319,29 +329,42 @@ begin
   ProgramCounter := 0;
 
   (*
-  OpImm6(ocLoadHighImmediate, regUser11, 14);                   { LDI U11 10000     } {         }
-  OpImm6(ocAddImmediateHalf,  regUser11, -206);                                       {         }
-  OpImm6(ocLoadLowImmediate,  regUser1, 0);                     { LDLI U1 0         } {         }
-  OpImm6(ocLoadLowImmediate,  regUser2, 0);                     { LDLI U2 0         } {         }
-  OpImm6(ocAddImmediateHalf,  regUser1, 1);                     { ADHI U1 1         } { <<<<<<+ }
-  OpImm3(ocAddImmediateShort, regUser12, regProgramCounter, 4); { ADSI U12 S1 4     } {       ^ }
-  OpRgtr(ocBranchNotEquals,   regUser12, regUser11, regUser1);  { BRNE U12 U11 U1   } { >>+   ^ }
-  OpImm6(ocLoadHighImmediate, regUser1, -14);                   { LDI U1 -10000     } {   V   ^ }
-  OpImm6(ocAddImmediateHalf,  regUser1, 206);                                         {   V   ^ }
-  OpImm6(ocAddImmediateHalf,  regUser2, 1);                     { ADHI U2 1         } {   V   ^ }
-  OpImm6(ocAddImmediateHalf,  regProgramCounter, -7);           { ADHI S1 -7        } { <<+ >>+ }
+  OpImm6(ocLoadHighImmediate,    regUser11, 14);                   { LDI U11 10000     } {         }
+  OpImm6(ocAddImmediateHalf,     regUser11, -206);                                       {         }
+  OpImm6(ocLoadLowImmediate,     regUser1, 0);                     { LDLI U1 0         } {         }
+  OpImm6(ocLoadLowImmediate,     regUser2, 0);                     { LDLI U2 0         } {         }
+  OpImm6(ocAddImmediateHalf,     regUser1, 1);                     { ADHI U1 1         } { <<<<<<+ }
+  OpImm3(ocAddImmediateShort,    regUser12, regProgramCounter, 4); { ADSI U12 S1 4     } {       ^ }
+  OpRgtr(ocBranchNotEquals,      regUser12, regUser11, regUser1);  { BRNE U12 U11 U1   } { >>+   ^ }
+  OpImm6(ocLoadHighImmediate,    regUser1, -14);                   { LDI U1 -10000     } {   V   ^ }
+  OpImm6(ocAddImmediateHalf,     regUser1, 206);                                         {   V   ^ }
+  OpImm6(ocAddImmediateHalf,     regUser2, 1);                     { ADHI U2 1         } {   V   ^ }
+  OpImm6(ocAddImmediateHalf,     regProgramCounter, -7);           { ADHI S1 -7        } { <<+ >>+ }
+  // *)
+
+  (*
+  OpImm6(ocLoadHighImmediate,    regUser1, 13);                    { LDI U1 9464       } {         } { LOAD OPERAND A: 000+++000---             }
+  OpImm6(ocAddImmediateHalf,     regUser1, -13);                                         {         }
+  OpImm6(ocLoadHighImmediate,    regUser2, 224);                   { LDI U2 163520     } {         } { LOAD OPERAND B: +0-+0-+0-+0-             }
+  OpImm6(ocAddImmediateHalf,     regUser2, 224);                                         {         }
+  OpImm6(ocLoadHighImmediate,    regUser10, 5);                    { LDI U10 3445      } {         } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
+  OpImm6(ocAddImmediateHalf,     regUser10, -200);                                       {         }
+  OpRgtr(ocAddRegister,          regUser3, regUser10, regZero);    { MOVR U3 U10       } {         } { MOVE TRUTH TABLE TO DESTINATION REGISTER }
+  OpRgtr(ocDyadicFunction,       regUser3, regUser1, regUser2);    { DYAD U3 U1 U2     } {         } { PERFORM TRITWISE EQUALITY OPERATION      }
+  OpRgtr(ocReserved13,           regZero, regZero, regZero);       { HALT              } {         }
   // *)
 
   // (*
-  OpImm6(ocLoadHighImmediate, regUser1, 13);                    { LDI U1 9464       } { LOAD OPERAND A: 000+++000---             }
-  OpImm6(ocAddImmediateHalf,  regUser1, -13);
-  OpImm6(ocLoadHighImmediate, regUser2, 224);                   { LDI U2 163520     } { LOAD OPERAND B: +0-+0-+0-+0-             }
-  OpImm6(ocAddImmediateHalf,  regUser2, 224);
-  OpImm6(ocLoadHighImmediate, regUser10, 5);                    { LDI U10 3445      } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
-  OpImm6(ocAddImmediateHalf,  regUser10, -200);
-  OpRgtr(ocAddRegister,       regUser3, regUser10, regZero);    { MOVR U3 U10       } { MOVE TRUTH TABLE TO DESTINATION REGISTER }
-  OpRgtr(ocDyadicFunction,    regUser3, regUser1, regUser2);    { DYAD U3 U1 U2     } { PERFORM TRITWISE EQUALITY OPERATION      }
-  OpRgtr(ocReserved13,        regZero, regZero, regZero);       { HALT              }
+  OpImm6(ocLoadHighImmediate,    regUser1, 224);                   { LDI U2 163520     } {         } { LOAD TEST TRYTE WITH NICE PATTERN        }
+  OpImm6(ocAddImmediateHalf,     regUser1, 224);                                         {         }
+  OpImm6(ocLoadLowImmediate,     regUser2, -12);                   { LDLI U2 -12       } {         } { CURRENT SHIFT AMOUNT                     }
+  OpImm6(ocLoadLowImmediate,     regUser3, 12);                    { LDLI U3 12        } {         } { MAX SHIFT AMOUNT                         }
+  OpImm3(ocAddImmediateShort,    regUser4, regProgramCounter, 0);  { MOVR U4 S1        } {         } { SET BRANCH TARGET TO NEXT INSTRUCTION    }
+  OpRgtr(ocShift,                regUser10, regUser1, regUser2);   { SHFT U10 U1 U2    } { <<+     }
+  OpRgtr(ocRotate,               regUser11, regUser1, regUser2);   { ROTR U11 U1 U2    } {   ^     }
+  OpImm3(ocAddImmediateShort,    regUser2, regUser2, 1);           { ADSI U2 U2 1      } {   ^     }
+  OpRgtr(ocBranchLessEqualsThan, regUser4, regUser2, regUser3);    { BRNE U4 U2 U3     } { >>+     }
+  OpRgtr(ocReserved13,           regZero, regZero, regZero);       { HALT              } {         }
   // *)
 end;
 
