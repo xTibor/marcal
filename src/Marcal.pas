@@ -84,37 +84,95 @@ type
     ocPush                 =  11, { RGTR - PSHR SP RA    }
     ocPop                  =  12, { RGTR - POPR SP RA    }
     ocCall                 =  13  { RGTR - CALL SP RA    }
-    { Pseudo opcodes
-      NoOperation              NOOP            => ADDR R0 R0 R0
+    {
+      General pseudo opcodes - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-      Move                     MOVR RD RA      => ADDR RD RA R0
+        NoOperation              NOOP            => ADDR R0 R0 R0
 
-      Return                   RTRN SP         => POPR SP PC
+        Move                     MOVR RD RA      => ADDR RD RA R0
 
-      BranchGreaterThan        BRGT RD RA RB   => BRLE RD RB RA
+        Return                   RTRN SP         => POPR SP PC
 
-      BranchGreaterEqualsThan  BRGE RD RA RB   => BRLT RD RB RA
+        BranchGreaterThan        BRGT RD RA RB   => BRLE RD RB RA
 
-      LoadImmediate            LDI RD -264992  => LDHI RD -364
-                                                  ADHI RD 364
+        BranchGreaterEqualsThan  BRGE RD RA RB   => BRLT RD RB RA
 
-      LoadMemory               LDM RD 212686   => LDHI RD 292
-                                                  ADHI RD -182
-                                                  LDMR RD RD R0
+        LoadImmediate            LDI RD -264992  => LDHI RD -364
+                                                    ADHI RD 364
 
-      LogicalAnd               LAND RD RA RB   => LDHI RD 8
-                                                  ADHI RD -40
-                                                  DYAD RD RA RB
+        LoadMemory               LDM RD 212686   => LDHI RD 292
+                                                    ADHI RD -182
+                                                    LDMR RD RD R0
 
-      LogicalOr                LOR RD RA RB    => LDHI RD 13
-                                                  ADHI RD 251
-                                                  DYAD RD RA RB
+        Subtraction              SUBR RD RA RB   => NEGR RD RB
+                                                    ADDR RD RD RA
 
-      Subtraction              SUBR RD RA RB   => NEGR RD RB
-                                                  ADDR RD RD RA
+        StackRelativeLoad        STCK SP RD -1   => ADSI RD SP -1
+                                                    LDMR RD RD R0
 
-      StackRelativeLoad        STCK SP RD -1   => ADSI RD SP -1
-                                                  LDMR RD RD R0
+      Two-operand functions using DYAD - - - - - - - - - - - - - - - - - - - - -
+
+        LogicalAnd               AND RD RA RB    => LDHI RD 8
+                                                    ADHI RD -40
+                                                    DYAD RD RA RB
+
+        LogicalNand              NAND RD RA RB   => LDHI RD -8
+                                                    ADHI RD 40
+                                                    DYAD RD RA RB
+
+        LogicalOr                OR RD RA RB     => LDHI RD 13
+                                                    ADHI RD 251
+                                                    DYAD RD RA RB
+
+        LogicalNor               NOR RD RA RB    => LDHI RD -13
+                                                    ADHI RD -251
+                                                    DYAD RD RA RB
+
+        LogicalXor               XOR RD RA RB    => LDHI RD -8
+                                                    ADHI RD 8
+                                                    DYAD RD RA RB
+
+        LogicalXnor              XNOR RD RA RB   => LDHI RD 8
+                                                    ADHI RD -8
+                                                    DYAD RD RA RB
+
+      One-operand functions using DYAD - - - - - - - - - - - - - - - - - - - - -
+
+        NegativeThresholdInvert  NTI RD RA       => LDHI RD -3
+                                                    ADHI RD -78
+                                                    DYAD RD RA R0
+
+        PositiveThresholdInvert  PTI RD RA       => LDHI RD -3
+                                                    ADHI RD 84
+                                                    DYAD RD RA R0
+
+        TritwiseIncrement        TWI RD RA       => LDHI RD -3
+                                                    ADHI RD 81
+                                                    DYAD RD RA R0
+
+        TritwiseDecrement        TWD RD RA       => LDHI RD 0
+                                                    ADHI RD -78
+                                                    DYAD RD RA R0
+
+        TritwiseIsFalse          TIF RD RA       => LDHI RD -3
+                                                    ADHI RD -78
+                                                    DYAD RD RA R0
+
+        TritwiseIsUnknown        TIU RD RA       => LDHI RD -3
+                                                    ADHI RD 78
+                                                    DYAD RD RA R0
+
+        TritwiseIsTrue           TIT RD RA       => LDHI RD 3
+                                                    ADHI RD -84
+                                                    DYAD RD RA R0
+
+        TritwiseClampDown        TCD RD RA       => LDHI RD 0
+                                                    ADHI RD -3
+                                                    DYAD RD RA R0
+
+        TritwiseClampUp          TCU RD RA       => LDHI RD 3
+                                                    ADHI RD 0
+                                                    DYAD RD RA R0
     }
   );
 
@@ -342,7 +400,7 @@ begin
   OpImm6(ocAddImmediateHalf,     regProgramCounter, -7);           { ADHI S1 -7        } { <<+ >>+ }
   // *)
 
-  (*
+  //(*
   OpImm6(ocLoadHighImmediate,    regUser1, 13);                    { LDI U1 9464       } {         } { LOAD OPERAND A: 000+++000---             }
   OpImm6(ocAddImmediateHalf,     regUser1, -13);                                         {         }
   OpImm6(ocLoadHighImmediate,    regUser2, 224);                   { LDI U2 163520     } {         } { LOAD OPERAND B: +0-+0-+0-+0-             }
@@ -354,7 +412,7 @@ begin
   OpRgtr(ocReserved13,           regZero, regZero, regZero);       { HALT              } {         }
   // *)
 
-  // (*
+  (*
   OpImm6(ocLoadHighImmediate,    regUser1, 224);                   { LDI U2 163520     } {         } { LOAD TEST TRYTE WITH NICE PATTERN        }
   OpImm6(ocAddImmediateHalf,     regUser1, 224);                                         {         }
   OpImm6(ocLoadLowImmediate,     regUser2, -12);                   { LDLI U2 -12       } {         } { CURRENT SHIFT AMOUNT                     }
