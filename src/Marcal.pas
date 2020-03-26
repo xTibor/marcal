@@ -136,6 +136,42 @@ type
                                                     ADHI RD -8
                                                     DYAD RD RA RB
 
+        Equality                 TEQ RD RA RB    => LDHI RD 5
+                                                    ADHI RD -200
+                                                    DYAD RD RA RB
+
+        LessThan                 TLT RD RA RB    => LDHI RD -13
+                                                    ADHI RD 146
+                                                    DYAD RD RA RB
+
+        LessEqualsThan           TLE RD RA RB    => LDHI RD 5
+                                                    ADHI RD 310
+                                                    DYAD RD RA RB
+
+        GreaterThan              TGT RD RA RB    => LDHI RD -5
+                                                    ADHI RD -310
+                                                    DYAD RD RA RB
+
+        GreaterEqualsThan        TGE RD RA RB    => LDHI RD 13
+                                                    ADHI RD -146
+                                                    DYAD RD RA RB
+
+        Consensus                CSS RD RA RB    => LDHI RD 9
+                                                    ADHI RD -1
+                                                    DYAD RD RA RB
+
+        AcceptAnything           ANY RD RA RB    => LDHI RD 12
+                                                    ADHI RD 212
+                                                    DYAD RD RA RB
+
+        KleeneImplication        KIMP RD RA RB   => LDHI RD 8
+                                                    ADHI RD 256
+                                                    DYAD RD RA RB
+
+        LukasiewiczImplication   LIMP RD RA RB   => LDHI RD 8
+                                                    ADHI RD 337
+                                                    DYAD RD RA RB
+
       One-operand functions using DYAD - - - - - - - - - - - - - - - - - - - - -
 
         NegativeThresholdInvert  NTI RD RA       => LDHI RD -3
