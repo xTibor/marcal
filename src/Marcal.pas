@@ -57,8 +57,8 @@ uses
 
 type
   TOpcode = (
-    ocReserved13           = -13, { <??> - Port load     }
-    ocReserved12           = -12, { <??> - Port store    }
+    ocReserved13           = -13, { <??> - Undefined     }
+    ocReserved12           = -12, { <??> - Undefined     }
     ocReserved11           = -11, { <??> - Undefined     }
     ocReserved10           = -10, { <??> - Undefined     }
     ocReserved9            =  -9, { <??> - Undefined     }
