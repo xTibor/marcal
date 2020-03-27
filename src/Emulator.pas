@@ -12,7 +12,7 @@
 program Emulator;
 
 uses
-  Test, Trit, Tryte;
+  Trit, Tryte;
 
 { MARCAL }
 {
