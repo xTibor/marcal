@@ -9,7 +9,7 @@
 {$RANGECHECKS ON}
 {$OVERFLOWCHECKS ON}
 
-program Marcal;
+program Emulator;
 
 uses
   Test, Trit, Tryte;
@@ -26,6 +26,10 @@ uses
     IMM6:
       000 000 000 000
       OP  RD  IMM-IMM
+
+  Memory:
+    729 pages
+    1 page = 729 long tryte
 
   When registers or immediate arguments not present, use implicit 0 arguments.
 

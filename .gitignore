@@ -1,3 +1,1 @@
-*.ppu
-*.o
-src/Marcal
+build/
