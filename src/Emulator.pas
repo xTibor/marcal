@@ -6,31 +6,6 @@ program Emulator;
 uses
   Trit, Words;
 
-{
-  When registers or immediate arguments not present, use implicit 0 arguments.
-  Integer overflow -> crash
-
-  Dyadic functions: DYAD RD RA RB
-    In:
-      RD: Register containing the truth table
-      RA: Argument value register
-      RB: Argument value register
-    Out:
-      RD: Output value register
-      RD := TruthTable(RD)[RA, RB]
-    Truth table representation:
-            RB RB RB
-            [-][0][+]
-      RA [-] a  b  c
-      RA [0] d  e  f
-      RA [+] g  h  i
-      where RD := [000ihgfedcba]
-
-  Shift/Rotate:
-    Operates in a +12 .. -12 range
-    Outside it has an undefined behaviour
-}
-
 type
   TOpcode = (
     ocReserved13           = -13, { <??> - Undefined     }

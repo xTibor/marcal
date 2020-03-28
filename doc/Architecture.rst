@@ -133,51 +133,80 @@ Instruction Encoding Format
 | IMM6             | Opcode       | RD           | Imm                         |
 +------------------+--------------+--------------+-----------------------------+
 
+TODO:
+  When registers or immediate arguments not present, use implicit 0/S0 arguments.
+
 Base Instruction Set
 --------------------
 
 +-----+--------+-------------------+-------------------------------------------+
 | Op. | Format | Instruction       | Description                               |
 +=====+========+===================+===========================================+
-| -13 |        |                   | Undefined instruction                     |
+| -13 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-| -12 |        |                   | Undefined instruction                     |
+| -12 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-| -11 |        |                   | Undefined instruction                     |
+| -11 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-| -10 |        |                   | Undefined instruction                     |
+| -10 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -9 |        |                   | Undefined instruction                     |
+|  -9 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -8 |        |                   | Undefined instruction                     |
+|  -8 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -7 |        |                   | Undefined instruction                     |
+|  -7 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -6 |        |                   | Undefined instruction                     |
+|  -6 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -5 |        |                   | Undefined instruction                     |
+|  -5 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -4 | RGTR   | ROTR RD RA RB     | Rotate left                               |
+|  -4 | RGTR   | ROTR RD RA RB     | Rotate register left.                     |
+|     |        |                   |                                           |
+|     |        |                   | RD := RA <rot< RB                         |
 +-----+--------+-------------------+-------------------------------------------+
-|  -3 | RGTR   | LSHR RD RA RB     | Shift left                                |
+|  -3 | RGTR   | LSHR RD RA RB     | Shift register left.                      |
+|     |        |                   |                                           |
+|     |        |                   | RD := RA << RB                            |
 +-----+--------+-------------------+-------------------------------------------+
-|  -2 | RGTR   | NEGR RD RA        | Negation                                  |
+|  -2 | RGTR   | NEGR RD RA        | Negation.                                 |
+|     |        |                   |                                           |
+|     |        |                   | RD := -RA                                 |
 +-----+--------+-------------------+-------------------------------------------+
-|  -1 | RGTR   | DYAD RD RA RB     | Dyadic function                           |
+|  -1 | RGTR   | DYAD RD RA RB     | Dyadic function.                          |
+|     |        |                   |                                           |
+|     |        |                   | See: `Dyadic function`_ subsection        |
 +-----+--------+-------------------+-------------------------------------------+
-|   0 | RGTR   | ADDR RD RA RB     | Add register to register                  |
+|   0 | RGTR   | ADDR RD RA RB     | Add register to register.                 |
+|     |        |                   |                                           |
+|     |        |                   | RD := RA + RB                             |
 +-----+--------+-------------------+-------------------------------------------+
-|   1 | IMM3   | ADDQ RD RA 12     | Add quarter-word to register              |
+|   1 | IMM3   | ADDQ RD RA 12     | Add quarter-word to register.             |
+|     |        |                   |                                           |
+|     |        |                   | RD := RA + Imm                            |
 +-----+--------+-------------------+-------------------------------------------+
-|   2 | IMM6   | ADDH RD 123       | Add half-word to register                 |
+|   2 | IMM6   | ADDH RD 123       | Add half-word to register.                |
+|     |        |                   |                                           |
+|     |        |                   | RD := RD + Imm                            |
 +-----+--------+-------------------+-------------------------------------------+
-|   3 | IMM6   | LDLH RD 123       | Load half-word to lower half of register  |
+|   3 | IMM6   | LDLH RD 123       | Load half-word to the lower half of       |
+|     |        |                   | register RD, clear the higher half with   |
+|     |        |                   | zeroes.                                   |
+|     |        |                   |                                           |
+|     |        |                   | RD := Imm                                 |
 +-----+--------+-------------------+-------------------------------------------+
-|   4 | IMM6   | LDHH RD 123       | Load half-word to higher half of register |
+|   4 | IMM6   | LDHH RD 123       | Load half-word to higher half of          |
+|     |        |                   | register RD, clear the lower half with    |
+|     |        |                   | zeroes.                                   |
+|     |        |                   |                                           |
+|     |        |                   | RD := Imm << 6                            |
 +-----+--------+-------------------+-------------------------------------------+
-|   5 | RGTR   | LDMR RD RA RB     | Load memory to register                   |
+|   5 | RGTR   | LDMR RD RA RB     | Load memory to register.                  |
+|     |        |                   |                                           |
+|     |        |                   | RD := Memory[RA + RB]                     |
 +-----+--------+-------------------+-------------------------------------------+
-|   6 | RGTR   | STMR RD RA RB     | Store register to memory                  |
+|   6 | RGTR   | STMR RD RA RB     | Store register to memory.                 |
+|     |        |                   |                                           |
+|     |        |                   | Memory[RA + RB] := RD                     |
 +-----+--------+-------------------+-------------------------------------------+
 |   7 | RGTR   | BREQ RD RA RB     | Branch to RD when RA = RB                 |
 +-----+--------+-------------------+-------------------------------------------+
@@ -193,6 +222,30 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 |  13 | RGTR   | CALL SP RA        | Call subroutine RA using stack SP         |
 +-----+--------+-------------------+-------------------------------------------+
+
+Dyadic function
+...............
+
+TODO:
+  Dyadic functions: DYAD RD RA RB
+    In:
+      RD: Register containing the truth table
+      RA: Argument value register
+      RB: Argument value register
+    Out:
+      RD: Output value register
+      RD := TruthTable(RD)[RA, RB]
+    Truth table representation:
+            RB RB RB
+            [-][0][+]
+      RA [-] a  b  c
+      RA [0] d  e  f
+      RA [+] g  h  i
+      where RD := [000ihgfedcba]
+
+  Shift/Rotate:
+    Operates in a +12 .. -12 range
+    Outside it has an undefined behaviour
 
 Pseudoinstructions
 ------------------
@@ -341,3 +394,7 @@ TODO: Move to DYAD
 |                   || ADDH RD 0        |                                      |
 |                   || DYAD RD RA S0    |                                      |
 +-------------------+-------------------+--------------------------------------+
+
+
+TODO:
+  Integer overflow -> undefined
