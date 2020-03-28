@@ -12,7 +12,7 @@
 program Emulator;
 
 uses
-  Trit, Tryte;
+  Trit, Words;
 
 { MARCAL }
 {
@@ -29,7 +29,7 @@ uses
 
   Memory:
     729 pages
-    1 page = 729 long tryte
+    1 page = 729 words
 
   When registers or immediate arguments not present, use implicit 0 arguments.
 
@@ -247,8 +247,8 @@ type
   );
 
   TExecutionContext = record
-    Registers: array[TRegister] of TLongTryte;
-    Memory: array[TLongTryte] of TLongTryte;
+    Registers: array[TRegister] of TWord;
+    Memory: array[TWord] of TWord;
     Halt: Boolean;
   end;
 
@@ -269,17 +269,17 @@ end;
 procedure PrintContext(var AContext: TExecutionContext);
 var
   LIndex: LongInt;
-  LValue: TLongTryte;
+  LValue: TWord;
 begin
   LValue := AContext.Registers[regZero];
-  WriteLn(LongTryteToStr(LValue), ' (', LValue:7, ') ');
+  WriteLn(WordToStr(LValue), ' (', LValue:7, ') ');
 
   for LIndex := 1 to 13 do begin
     LValue := AContext.Registers[TRegister(+LIndex)];
-    Write(LongTryteToStr(LValue), ' (', LValue:7, ') ');
+    Write(WordToStr(LValue), ' (', LValue:7, ') ');
 
     LValue := AContext.Registers[TRegister(-LIndex)];
-    Write(LongTryteToStr(LValue), ' (', LValue:7, ') ');
+    Write(WordToStr(LValue), ' (', LValue:7, ') ');
 
     WriteLn();
   end;
@@ -288,33 +288,33 @@ end;
 
 procedure ExecuteContext(var AContext: TExecutionContext);
 var
-  LProgramCounter: TLongTryte;
+  LProgramCounter: TWord;
 
-  LShortSplice: TShortSplice;
+  LQuarterWords: TQuarterWordArray;
   LOpcode: TOpcode;
   LRegA: TRegister;
   LRegB: TRegister;
   LRegD: TRegister;
 
-  LHalfSplice: THalfSplice;
-  LImmediateShort: TShortTryte;
-  LImmediateHalf: THalfTryte;
+  LHalfWords: THalfWordArray;
+  LImmediateQuarter: TQuarterWord;
+  LImmediateHalf: THalfWord;
 begin
   with AContext do begin
     LProgramCounter := Memory[Registers[regProgramCounter]];
-    LShortSplice := LongTryteShortSplice(LProgramCounter);
-    LHalfSplice  := LongTryteHalfSplice(LProgramCounter);
+    LQuarterWords := WordToQuarterWords(LProgramCounter);
+    LHalfWords  := WordToHalfWords(LProgramCounter);
 
-    LOpcode    := TOpcode(LShortSplice[3]);
-    LRegD      := TRegister(LShortSplice[2]);
-    LRegA      := TRegister(LShortSplice[1]);
-    LRegB      := TRegister(LShortSplice[0]);
+    LOpcode    := TOpcode(LQuarterWords[3]);
+    LRegD      := TRegister(LQuarterWords[2]);
+    LRegA      := TRegister(LQuarterWords[1]);
+    LRegB      := TRegister(LQuarterWords[0]);
 
-    LImmediateShort := LShortSplice[0];
-    LImmediateHalf := LHalfSplice[0];
+    LImmediateQuarter := LQuarterWords[0];
+    LImmediateHalf := LHalfWords[0];
 
     WriteLn(LOpcode, ' ', LRegD, ' ', LRegA, ' ', LRegB);
-    WriteLn(LongTryteToStr(LImmediateHalf), ' (', LImmediateHalf:7, ') ');
+    WriteLn(WordToStr(LImmediateHalf), ' (', LImmediateHalf:7, ') ');
     WriteLn();
 
     Registers[regProgramCounter] += 1;
@@ -322,7 +322,7 @@ begin
     case LOpcode of
       ocNegation:
         if LRegD <> regZero then
-          Registers[LRegD] := LongTryteApplyMonadicFunction(Registers[LRegA], CTritFunctionNegation);
+          Registers[LRegD] := WordApplyMonadicFunction(Registers[LRegA], CTritFunctionNegation);
       ocLoadLowImmediate:
         if LRegD <> regZero then
           Registers[LRegD] := LImmediateHalf;
@@ -331,7 +331,7 @@ begin
           Registers[LRegD] := LImmediateHalf * 729; { << 6 }
       ocAddImmediateShort:
         if LRegD <> regZero then
-          Registers[LRegD] := Registers[LRegA] + LImmediateShort;
+          Registers[LRegD] := Registers[LRegA] + LImmediateQuarter;
       ocAddImmediateHalf:
         if LRegD <> regZero then
           Registers[LRegD] += LImmediateHalf;
@@ -373,17 +373,17 @@ begin
       end;
       ocDyadicFunction: begin
         if LRegD <> regZero then
-          Registers[LRegD] := LongTryteApplyDyadicFunction(
+          Registers[LRegD] := WordApplyDyadicFunction(
             Registers[LRegA],
             Registers[LRegB],
-            LongTryteToDyadicFunction(Registers[LRegD]));
+            WordToDyadicFunction(Registers[LRegD]));
       end;
       ocShift:
         if LRegD <> regZero then
-          Registers[LRegD] := LongTryteShift(Registers[LRegA], Registers[LRegB]);
+          Registers[LRegD] := WordShift(Registers[LRegA], Registers[LRegB]);
       ocRotate:
         if LRegD <> regZero then
-          Registers[LRegD] := LongTryteRotate(Registers[LRegA], Registers[LRegB]);
+          Registers[LRegD] := WordRotate(Registers[LRegA], Registers[LRegB]);
       ocReserved13:
         Halt := true;
     end;
@@ -392,7 +392,7 @@ end;
 
 procedure AssembleProgram(var AContext: TExecutionContext);
 var
-  ProgramCounter: TLongTryte;
+  ProgramCounter: TWord;
 
   procedure OpRgtr(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister);
   begin
@@ -404,7 +404,7 @@ var
     ProgramCounter += 1;
   end;
 
-  procedure OpImm3(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TShortTryte);
+  procedure OpImm3(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TQuarterWord);
   begin
     AContext.Memory[ProgramCounter] :=
       (LongInt(AOpcode)    * 19683) + { << 9 }
@@ -414,7 +414,7 @@ var
     ProgramCounter += 1;
   end;
 
-  procedure OpImm6(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfTryte);
+  procedure OpImm6(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfWord);
   begin
     AContext.Memory[ProgramCounter] :=
       (LongInt(AOpcode)    * 19683) + { << 9 }
@@ -453,7 +453,7 @@ begin
   // *)
 
   (*
-  OpImm6(ocLoadHighImmediate,    regUser1, 224);                   { LDI U2 163520     } {         } { LOAD TEST TRYTE WITH NICE PATTERN        }
+  OpImm6(ocLoadHighImmediate,    regUser1, 224);                   { LDI U2 163520     } {         } { LOAD TEST WORD WITH NICE PATTERN         }
   OpImm6(ocAddImmediateHalf,     regUser1, 224);                                         {         }
   OpImm6(ocLoadLowImmediate,     regUser2, -12);                   { LDLI U2 -12       } {         } { CURRENT SHIFT AMOUNT                     }
   OpImm6(ocLoadLowImmediate,     regUser3, 12);                    { LDLI U3 12        } {         } { MAX SHIFT AMOUNT                         }

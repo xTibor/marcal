@@ -8,6 +8,9 @@ type
 const
   CTritToStr: array[TTrit] of Char = ('-', '0', '+');
 
+type
+  TTritArray = array of TTrit;
+
 { Monadic functions }
 
 type
