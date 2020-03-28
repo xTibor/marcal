@@ -1,11 +1,3 @@
-{
-  http://homepage.divms.uiowa.edu/~jones/ternary/logic.shtml
-  https://rosettacode.org/wiki/Balanced_ternary
-  https://www.youtube.com/watch?v=EbJMtJq20NY
-  https://www.freepascal.org/docs-html/rtl/system/index-5.html
-  https://www.freepascal.org/docs-html/prog/progse2.html#progsu65.html
-}
-
 {$RANGECHECKS ON}
 {$OVERFLOWCHECKS ON}
 
