@@ -6,28 +6,8 @@ program Emulator;
 uses
   Trit, Words;
 
-{ MARCAL }
 {
-  Instruction formats:
-    RGTR:
-      000 000 000 +--
-      OP  RD  RA  RB
-    IMM3:
-      000 000 000 000
-      OP  RD  RA  IMM
-    IMM6:
-      000 000 000 000
-      OP  RD  IMM-IMM
-
-  Memory:
-    729 pages
-    1 page = 729 words
-
   When registers or immediate arguments not present, use implicit 0 arguments.
-
-  R0 - Zero
-  R1 - Program counter
-
   Integer overflow -> crash
 
   Dyadic functions: DYAD RD RA RB
