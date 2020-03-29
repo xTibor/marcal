@@ -10,6 +10,17 @@ MARCAL Ternary RISC Architecture
 Introduction
 ============
 
+Architecture Goals
+------------------
+
+The goal of this project to provide a platform for experimenting with ternary
+computing. The top priority is simplicity, defining an easy-to-implement yet
+flexible RISC architecture heavily inspired by existing binary architectures,
+and developing an accompanying software environment.
+
+The project doesn't aim to be compatible with any existing binary software or
+data formats.
+
 Balanced Ternary
 ----------------
 
