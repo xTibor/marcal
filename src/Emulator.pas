@@ -4,69 +4,9 @@
 program Emulator;
 
 uses
-  Trit, Words;
+  Trit, Words, Arch;
 
 type
-  TOpcode = (
-    ocReserved13           = -13, { <??> - Undefined     }
-    ocReserved12           = -12, { <??> - Undefined     }
-    ocReserved11           = -11, { <??> - Undefined     }
-    ocReserved10           = -10, { <??> - Undefined     }
-    ocReserved9            =  -9, { <??> - Undefined     }
-    ocReserved8            =  -8, { <??> - Undefined     }
-    ocReserved7            =  -7, { <??> - Undefined     }
-    ocReserved6            =  -6, { <??> - Undefined     }
-    ocReserved5            =  -5, { <??> - Undefined     }
-    ocRotate               =  -4, { RGTR - ROTR RD RA RB }
-    ocShift                =  -3, { RGTR - LSHR RD RA RB }
-    ocNegation             =  -2, { RGTR - NEGR RD RA    }
-    ocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
-    ocAddRegister          =   0, { RGTR - ADDR RD RA RB }
-    ocAddImmediateQuarter  =   1, { IMM3 - ADDQ RD RA 12 }
-    ocAddImmediateHalf     =   2, { IMM6 - ADDH RD 123   }
-    ocLoadLowImmediate     =   3, { IMM6 - LDLH RD 123   }
-    ocLoadHighImmediate    =   4, { IMM6 - LDHH RD 123   }
-    ocLoadMemory           =   5, { RGTR - LDMR RD RA RB }
-    ocStoreMemory          =   6, { RGTR - STMR RD RA RB }
-    ocBranchEquals         =   7, { RGTR - BREQ RD RA RB }
-    ocBranchNotEquals      =   8, { RGTR - BRNE RD RA RB }
-    ocBranchLessThan       =   9, { RGTR - BRLT RD RA RB }
-    ocBranchLessEqualsThan =  10, { RGTR - BRLE RD RA RB }
-    ocPush                 =  11, { RGTR - PUSH SP RA    }
-    ocPull                 =  12, { RGTR - PULL SP RA    }
-    ocCall                 =  13  { RGTR - CALL SP RA    }
-  );
-
-  TRegister = (
-    regUser13         = -13,
-    regUser12         = -12,
-    regUser11         = -11,
-    regUser10         = -10,
-    regUser9          =  -9,
-    regUser8          =  -8,
-    regUser7          =  -7,
-    regUser6          =  -6,
-    regUser5          =  -5,
-    regUser4          =  -4,
-    regUser3          =  -3,
-    regUser2          =  -2,
-    regUser1          =  -1,
-    regZero           =   0,
-    regProgramCounter =   1,
-    regSystem2        =   2,
-    regSystem3        =   3,
-    regSystem4        =   4,
-    regSystem5        =   5,
-    regSystem6        =   6,
-    regSystem7        =   7,
-    regSystem8        =   8,
-    regSystem9        =   9,
-    regSystem10       =  10,
-    regSystem11       =  11,
-    regSystem12       =  12,
-    regSystem13       =  13
-  );
-
   TExecutionContext = record
     Registers: array[TRegister] of TWord;
     Memory: array[TWord] of TWord;
@@ -211,88 +151,34 @@ begin
   end;
 end;
 
-procedure AssembleProgram(var AContext: TExecutionContext);
+procedure LoadProgram(var AContext: TExecutionContext; APath: String);
 var
-  ProgramCounter: TWord;
-
-  procedure OpRgtr(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister);
-  begin
-    AContext.Memory[ProgramCounter] :=
-      (LongInt(AOpcode) * 19683) + { << 9 }
-      (LongInt(ARegD)   *   729) + { << 6 }
-      (LongInt(ARegA)   *    27) + { << 3 }
-      (LongInt(ARegB)   *     1);  { << 0 }
-    ProgramCounter += 1;
-  end;
-
-  procedure OpImm3(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TQuarterWord);
-  begin
-    AContext.Memory[ProgramCounter] :=
-      (LongInt(AOpcode)    * 19683) + { << 9 }
-      (LongInt(ARegD)      *   729) + { << 6 }
-      (LongInt(ARegA)      *    27) + { << 3 }
-      (LongInt(AImmediate) *     1);  { << 0 }
-    ProgramCounter += 1;
-  end;
-
-  procedure OpImm6(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfWord);
-  begin
-    AContext.Memory[ProgramCounter] :=
-      (LongInt(AOpcode)    * 19683) + { << 9 }
-      (LongInt(ARegD)      *   729) + { << 6 }
-      (LongInt(AImmediate) *     1);  { << 0 }
-    ProgramCounter += 1;
-  end;
-
+  LProgramFile: TextFile;
+  LOffset: TWord;
+  LInstruction: TWord;
 begin
-  ProgramCounter := 0;
+  Assign(LProgramFile, APath);
+  Reset(LProgramFile);
 
-  (*
-  OpImm6(ocLoadHighImmediate,    regUser11, 14);                   { LDW U11 10000     } {         }
-  OpImm6(ocAddImmediateHalf,     regUser11, -206);                                       {         }
-  OpImm6(ocLoadLowImmediate,     regUser1, 0);                     { LDLH U1 0         } {         }
-  OpImm6(ocLoadLowImmediate,     regUser2, 0);                     { LDLH U2 0         } {         }
-  OpImm6(ocAddImmediateHalf,     regUser1, 1);                     { ADDH U1 1         } { <<<<<<+ }
-  OpImm3(ocAddImmediateQuarter,  regUser12, regProgramCounter, 4); { ADDQ U12 S1 4     } {       ^ }
-  OpRgtr(ocBranchNotEquals,      regUser12, regUser11, regUser1);  { BRNE U12 U11 U1   } { >>+   ^ }
-  OpImm6(ocLoadHighImmediate,    regUser1, -14);                   { LDW U1 -10000     } {   V   ^ }
-  OpImm6(ocAddImmediateHalf,     regUser1, 206);                                         {   V   ^ }
-  OpImm6(ocAddImmediateHalf,     regUser2, 1);                     { ADDH U2 1         } {   V   ^ }
-  OpImm6(ocAddImmediateHalf,     regProgramCounter, -7);           { ADDH S1 -7        } { <<+ >>+ }
-  // *)
+  while not Eof(LProgramFile) do begin
+    ReadLn(LProgramFile, LOffset, LInstruction);
+    AContext.Memory[LOffset] := LInstruction;
+  end;
 
-  //(*
-  OpImm6(ocLoadHighImmediate,    regUser1, 13);                    { LDW U1 9464       } {         } { LOAD OPERAND A: 000+++000---             }
-  OpImm6(ocAddImmediateHalf,     regUser1, -13);                                         {         }
-  OpImm6(ocLoadHighImmediate,    regUser2, 224);                   { LDW U2 163520     } {         } { LOAD OPERAND B: +0-+0-+0-+0-             }
-  OpImm6(ocAddImmediateHalf,     regUser2, 224);                                         {         }
-  OpImm6(ocLoadHighImmediate,    regUser10, 5);                    { LDW U10 3445      } {         } { LOAD TRUTH TABLE FOR TRITWISE EQUALITY   }
-  OpImm6(ocAddImmediateHalf,     regUser10, -200);                                       {         }
-  OpRgtr(ocAddRegister,          regUser3, regUser10, regZero);    { MOVR U3 U10       } {         } { MOVR TRUTH TABLE TO DESTINATION REGISTER }
-  OpRgtr(ocDyadicFunction,       regUser3, regUser1, regUser2);    { DYAD U3 U1 U2     } {         } { PERFORM TRITWISE EQUALITY OPERATION      }
-  OpRgtr(ocReserved13,           regZero, regZero, regZero);       { HALT              } {         }
-  // *)
-
-  (*
-  OpImm6(ocLoadHighImmediate,    regUser1, 224);                   { LDW U2 163520     } {         } { LOAD TEST WORD WITH NICE PATTERN         }
-  OpImm6(ocAddImmediateHalf,     regUser1, 224);                                         {         }
-  OpImm6(ocLoadLowImmediate,     regUser2, -12);                   { LDLH U2 -12       } {         } { CURRENT SHIFT AMOUNT                     }
-  OpImm6(ocLoadLowImmediate,     regUser3, 12);                    { LDLH U3 12        } {         } { MAX SHIFT AMOUNT                         }
-  OpImm3(ocAddImmediateQuarter,  regUser4, regProgramCounter, 0);  { MOVR U4 S1        } {         } { SET BRANCH TARGET TO NEXT INSTRUCTION    }
-  OpRgtr(ocShift,                regUser10, regUser1, regUser2);   { LSHR U10 U1 U2    } { <<+     }
-  OpRgtr(ocRotate,               regUser11, regUser1, regUser2);   { ROTR U11 U1 U2    } {   ^     }
-  OpImm3(ocAddImmediateQuarter,  regUser2, regUser2, 1);           { ADDQ U2 U2 1      } {   ^     }
-  OpRgtr(ocBranchLessEqualsThan, regUser4, regUser2, regUser3);    { BRNE U4 U2 U3     } { >>+     }
-  OpRgtr(ocReserved13,           regZero, regZero, regZero);       { HALT              } {         }
-  // *)
+  Close(LProgramFile);
 end;
 
 var
   Context: TExecutionContext;
 begin
+  if ParamCount() <> 1 then begin
+    WriteLn('Usage: Emulator program.t');
+    Exit;
+  end;
+
   {Write(#$1B'c');}
   InitContext(Context);
-  AssembleProgram(Context);
+  LoadProgram(Context, ParamStr(1));
   while not Context.Halt do begin
     {Write(#$1B'[1;1H');}
     PrintContext(Context);

@@ -1,4 +1,6 @@
-TOOLS := build/Emulator
+TOOLS := \
+	build/Emulator \
+	build/Assembler
 
 run: $(TOOLS)
 	build/Emulator
@@ -7,6 +9,6 @@ build/% : src/%.pas
 	fpc -gl -FEbuild $<
 
 clean:
-	rm $(TOOLS)
-	rm build/*.o
-	rm build/*.ppu
+	rm -f $(TOOLS)
+	rm -f build/*.o
+	rm -f build/*.ppu
