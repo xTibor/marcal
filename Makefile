@@ -3,7 +3,7 @@ TOOLS := \
 	build/Assembler
 
 run: $(TOOLS)
-	build/Emulator
+	build/Emulator build/Example01.t
 
 build/% : src/%.pas
 	fpc -gl -FEbuild $<

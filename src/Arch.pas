@@ -3,34 +3,40 @@ unit Arch;
 interface
 
 type
-  TOpcode = (
-    ocReserved13           = -13, { <??> - Undefined     }
-    ocReserved12           = -12, { <??> - Undefined     }
-    ocReserved11           = -11, { <??> - Undefined     }
-    ocReserved10           = -10, { <??> - Undefined     }
-    ocReserved9            =  -9, { <??> - Undefined     }
-    ocReserved8            =  -8, { <??> - Undefined     }
-    ocReserved7            =  -7, { <??> - Undefined     }
-    ocReserved6            =  -6, { <??> - Undefined     }
-    ocReserved5            =  -5, { <??> - Undefined     }
-    ocRotate               =  -4, { RGTR - ROTR RD RA RB }
-    ocShift                =  -3, { RGTR - LSHR RD RA RB }
-    ocNegation             =  -2, { RGTR - NEGR RD RA    }
-    ocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
-    ocAddRegister          =   0, { RGTR - ADDR RD RA RB }
-    ocAddImmediateQuarter  =   1, { IMM3 - ADDQ RD RA 12 }
-    ocAddImmediateHalf     =   2, { IMM6 - ADDH RD 123   }
-    ocLoadLowImmediate     =   3, { IMM6 - LDLH RD 123   }
-    ocLoadHighImmediate    =   4, { IMM6 - LDHH RD 123   }
-    ocLoadMemory           =   5, { RGTR - LDMR RD RA RB }
-    ocStoreMemory          =   6, { RGTR - STMR RD RA RB }
-    ocBranchEquals         =   7, { RGTR - BREQ RD RA RB }
-    ocBranchNotEquals      =   8, { RGTR - BRNE RD RA RB }
-    ocBranchLessThan       =   9, { RGTR - BRLT RD RA RB }
-    ocBranchLessEqualsThan =  10, { RGTR - BRLE RD RA RB }
-    ocPush                 =  11, { RGTR - PUSH SP RA    }
-    ocPull                 =  12, { RGTR - PULL SP RA    }
-    ocCall                 =  13  { RGTR - CALL SP RA    }
+  TInstructionFormat = (
+    ifRegister,   { RGTR }
+    ifImmediate3, { IMM3 }
+    ifImmediate6  { IMM6 }
+  );
+
+  TInstructionOpcode = (
+    iocUndefined13          = -13, { <??> - Undefined     }
+    iocUndefined12          = -12, { <??> - Undefined     }
+    iocUndefined11          = -11, { <??> - Undefined     }
+    iocUndefined10          = -10, { <??> - Undefined     }
+    iocUndefined9           =  -9, { <??> - Undefined     }
+    iocUndefined8           =  -8, { <??> - Undefined     }
+    iocUndefined7           =  -7, { <??> - Undefined     }
+    iocUndefined6           =  -6, { <??> - Undefined     }
+    iocUndefined5           =  -5, { <??> - Undefined     }
+    iocRotate               =  -4, { RGTR - ROTR RD RA RB }
+    iocShift                =  -3, { RGTR - LSHR RD RA RB }
+    iocNegation             =  -2, { RGTR - NEGR RD RA    }
+    iocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
+    iocAddRegister          =   0, { RGTR - ADDR RD RA RB }
+    iocAddImmediateQuarter  =   1, { IMM3 - ADDQ RD RA 12 }
+    iocAddImmediateHalf     =   2, { IMM6 - ADDH RD 123   }
+    iocLoadLowImmediate     =   3, { IMM6 - LDLH RD 123   }
+    iocLoadHighImmediate    =   4, { IMM6 - LDHH RD 123   }
+    iocLoadMemory           =   5, { RGTR - LDMR RD RA RB }
+    iocStoreMemory          =   6, { RGTR - STMR RD RA RB }
+    iocBranchEquals         =   7, { RGTR - BREQ RD RA RB }
+    iocBranchNotEquals      =   8, { RGTR - BRNE RD RA RB }
+    iocBranchLessThan       =   9, { RGTR - BRLT RD RA RB }
+    iocBranchLessEqualsThan =  10, { RGTR - BRLE RD RA RB }
+    iocPush                 =  11, { RGTR - PUSH SP RA    }
+    iocPull                 =  12, { RGTR - PULL SP RA    }
+    iocCall                 =  13  { RGTR - CALL SP RA    }
   );
 
   TRegister = (
@@ -63,6 +69,98 @@ type
     regSystem13       =  13
   );
 
+const
+  CInstructionMnemonics: array[TInstructionOpcode] of String = (
+    'UD13', 'UD12', 'UD11',
+    'UD10', 'UD09', 'UD08',
+    'UD07', 'UD06', 'UD05',
+    'ROTR', 'LSHR', 'NEGR',
+    'DYAD', 'ADDR', 'ADDQ',
+    'ADDH', 'LDLH', 'LDHH',
+    'LDMR', 'STMR', 'BREQ',
+    'BRNE', 'BRLT', 'BRLE',
+    'PUSH', 'PULL', 'CALL'
+  );
+
+  CInstructionFormats: array[TInstructionOpcode] of TInstructionFormat = (
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifImmediate3,
+    ifImmediate6, ifImmediate6, ifImmediate6,
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifRegister,
+    ifRegister,   ifRegister,   ifRegister
+  );
+
+  CRegisterNames: array[TRegister, 0..2] of String = (
+    { Name,  Alias, Alias }
+    ('U13',  '',    ''  ),
+    ('U12',  '',    ''  ),
+    ('U11',  '',    ''  ),
+    ('U10',  '',    ''  ),
+    ('U9',   '',    ''  ),
+    ('U8',   '',    ''  ),
+    ('U7',   '',    ''  ),
+    ('U6',   '',    ''  ),
+    ('U5',   '',    ''  ),
+    ('U4',   '',    ''  ),
+    ('U3',   '',    ''  ),
+    ('U2',   '',    ''  ),
+    ('U1',   '',    ''  ),
+    ('ZERO', 'U0',  'S0'),
+    ('PC',   'S1',  ''  ),
+    ('S2',   '',    ''  ),
+    ('S3',   '',    ''  ),
+    ('S4',   '',    ''  ),
+    ('S5',   '',    ''  ),
+    ('S6',   '',    ''  ),
+    ('S7',   '',    ''  ),
+    ('S8',   '',    ''  ),
+    ('S9',   '',    ''  ),
+    ('S10',  '',    ''  ),
+    ('S11',  '',    ''  ),
+    ('S12',  '',    ''  ),
+    ('S13',  '',    ''  )
+  );
+
+function StrToInstructionOpcode(AMnemonic: String): TInstructionOpcode;
+function StrToRegister(ARegisterName: String): TRegister;
+function RegisterToStr(ARegister: TRegister): String;
+
 implementation
+
+function StrToInstructionOpcode(AMnemonic: String): TInstructionOpcode;
+var
+  LIndex: TInstructionOpcode;
+begin
+  for LIndex := Low(TInstructionOpcode) to High(TInstructionOpcode) do begin
+    if CInstructionMnemonics[LIndex] = AMnemonic then
+      Exit(LIndex);
+  end;
+  // Assert
+end;
+
+function StrToRegister(ARegisterName: String): TRegister;
+var
+  LIndex: TRegister;
+  LAliasIndex: Integer;
+begin
+  for LIndex := Low(TRegister) to High(TRegister) do begin
+    for LAliasIndex := Low(CRegisterNames[LIndex]) to High(CRegisterNames[LIndex]) do begin
+      if CRegisterNames[LIndex, LAliasIndex] = '' then
+        Continue;
+      if CRegisterNames[LIndex, LAliasIndex] = ARegisterName then
+        Exit(LIndex);
+    end;
+  end;
+  // Assert
+end;
+
+function RegisterToStr(ARegister: TRegister): String;
+begin
+  RegisterToStr := CRegisterNames[ARegister, Low(CRegisterNames[ARegister])];
+end;
 
 end.

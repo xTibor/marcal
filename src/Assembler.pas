@@ -6,110 +6,7 @@ program Assembler;
 uses
   Trit, Words, Arch, Utils, SysUtils;
 
-type
-  TInstructionFormat = (
-      ifRegister,
-      ifImmediate3,
-      ifImmediate6
-  );
-
-const
-  CInstructions: array[TOpcode] of record
-    Mnemonic: String;
-    Format: TInstructionFormat;
-  end = (
-    ( Mnemonic: 'UD13'; Format: ifRegister   ),
-    ( Mnemonic: 'UD12'; Format: ifRegister   ),
-    ( Mnemonic: 'UD11'; Format: ifRegister   ),
-    ( Mnemonic: 'UD10'; Format: ifRegister   ),
-    ( Mnemonic: 'UD09'; Format: ifRegister   ),
-    ( Mnemonic: 'UD08'; Format: ifRegister   ),
-    ( Mnemonic: 'UD07'; Format: ifRegister   ),
-    ( Mnemonic: 'UD06'; Format: ifRegister   ),
-    ( Mnemonic: 'UD05'; Format: ifRegister   ),
-    ( Mnemonic: 'ROTR'; Format: ifRegister   ),
-    ( Mnemonic: 'LSHR'; Format: ifRegister   ),
-    ( Mnemonic: 'NEGR'; Format: ifRegister   ),
-    ( Mnemonic: 'DYAD'; Format: ifRegister   ),
-    ( Mnemonic: 'ADDR'; Format: ifRegister   ),
-    ( Mnemonic: 'ADDQ'; Format: ifImmediate3 ),
-    ( Mnemonic: 'ADDH'; Format: ifImmediate6 ),
-    ( Mnemonic: 'LDLH'; Format: ifImmediate6 ),
-    ( Mnemonic: 'LDHH'; Format: ifImmediate6 ),
-    ( Mnemonic: 'LDMR'; Format: ifRegister   ),
-    ( Mnemonic: 'STMR'; Format: ifRegister   ),
-    ( Mnemonic: 'BREQ'; Format: ifRegister   ),
-    ( Mnemonic: 'BRNE'; Format: ifRegister   ),
-    ( Mnemonic: 'BRLT'; Format: ifRegister   ),
-    ( Mnemonic: 'BRLE'; Format: ifRegister   ),
-    ( Mnemonic: 'PUSH'; Format: ifRegister   ),
-    ( Mnemonic: 'PULL'; Format: ifRegister   ),
-    ( Mnemonic: 'CALL'; Format: ifRegister   )
-  );
-
-  CRegisters: array[0..29] of record
-    RegName: String;
-    Register: TRegister;
-  end = (
-    ( RegName: 'S0';    Register: regZero           ),
-    ( RegName: 'S1';    Register: regProgramCounter ),
-    ( RegName: 'S2';    Register: regSystem2        ),
-    ( RegName: 'S3';    Register: regSystem3        ),
-    ( RegName: 'S4';    Register: regSystem4        ),
-    ( RegName: 'S5';    Register: regSystem5        ),
-    ( RegName: 'S6';    Register: regSystem6        ),
-    ( RegName: 'S7';    Register: regSystem7        ),
-    ( RegName: 'S8';    Register: regSystem8        ),
-    ( RegName: 'S9';    Register: regSystem9        ),
-    ( RegName: 'S10';   Register: regSystem10       ),
-    ( RegName: 'S11';   Register: regSystem11       ),
-    ( RegName: 'S12';   Register: regSystem12       ),
-    ( RegName: 'S13';   Register: regSystem13       ),
-    ( RegName: 'U0';    Register: regZero           ),
-    ( RegName: 'U1';    Register: regUser1          ),
-    ( RegName: 'U2';    Register: regUser2          ),
-    ( RegName: 'U3';    Register: regUser3          ),
-    ( RegName: 'U4';    Register: regUser4          ),
-    ( RegName: 'U5';    Register: regUser5          ),
-    ( RegName: 'U6';    Register: regUser6          ),
-    ( RegName: 'U7';    Register: regUser7          ),
-    ( RegName: 'U8';    Register: regUser8          ),
-    ( RegName: 'U9';    Register: regUser9          ),
-    ( RegName: 'U10';   Register: regUser10         ),
-    ( RegName: 'U11';   Register: regUser11         ),
-    ( RegName: 'U12';   Register: regUser12         ),
-    ( RegName: 'U13';   Register: regUser13         ),
-    ( RegName: 'PC';    Register: regProgramCounter ),
-    ( RegName: 'ZERO';  Register: regZero           )
-  );
-
-function MnemonicToOpcode(AMnemonic: String): TOpcode;
-var
-  LIndex: TOpcode;
-begin
-  for LIndex := Low(CInstructions) to High(CInstructions) do begin
-    if CInstructions[LIndex].Mnemonic = AMnemonic then begin
-      MnemonicToOpcode := LIndex;
-      Exit;
-    end;
-  end;
-  // TODO: Assert here
-end;
-
-function StrToRegister(ARegName: String): TRegister;
-var
-  LIndex: Integer;
-begin
-  for LIndex := Low(CRegisters) to High(CRegisters) do begin
-    if CRegisters[LIndex].RegName = ARegName then begin
-      StrToRegister := CRegisters[LIndex].Register;
-      Exit;
-    end;
-  end;
-  // TODO: Assert here
-end;
-
-function EncodeInstructionRgtr(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister): TWord;
+function EncodeInstructionRgtr(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister): TWord;
 begin
   EncodeInstructionRgtr :=
     (LongInt(AOpcode) * 19683) + { << 9 }
@@ -118,7 +15,7 @@ begin
     (LongInt(ARegB)   *     1);  { << 0 }
 end;
 
-function EncodeInstructionImm3(AOpcode: TOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TQuarterWord): TWord;
+function EncodeInstructionImm3(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TQuarterWord): TWord;
 begin
   EncodeInstructionImm3 :=
     (LongInt(AOpcode)    * 19683) + { << 9 }
@@ -127,7 +24,7 @@ begin
     (LongInt(AImmediate) *     1);  { << 0 }
 end;
 
-function EncodeInstructionImm6(AOpcode: TOpcode; ARegD: TRegister; AImmediate: THalfWord): TWord;
+function EncodeInstructionImm6(AOpcode: TInstructionOpcode; ARegD: TRegister; AImmediate: THalfWord): TWord;
 begin
   EncodeInstructionImm6 :=
     (LongInt(AOpcode)    * 19683) + { << 9 }
@@ -140,7 +37,7 @@ var
   GOutputFile: TextFile;
   GLine: String;
   GLineSplit: TStringArray;
-  GOpcode: TOpcode;
+  GOpcode: TInstructionOpcode;
   GProgramCounter: TWord;
   GInstruction: TWord;
 
@@ -161,8 +58,8 @@ begin
     ReadLn(GInputFile, GLine);
     GLineSplit := Split(GLine);
 
-    GOpcode := MnemonicToOpcode(GLineSplit[0]);
-    case CInstructions[GOpcode].Format of
+    GOpcode := StrToInstructionOpcode(GLineSplit[0]);
+    case CInstructionFormats[GOpcode] of
       ifRegister:
         GInstruction := EncodeInstructionRgtr(
           GOpcode,
