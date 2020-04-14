@@ -84,7 +84,7 @@ begin
       end;
       iocNegation: begin
         if LRegD <> regZero then
-          Registers[LRegD] := WordApplyMonadicFunction(Registers[LRegA], CTritFunctionNegation);
+          Registers[LRegD] := -Registers[LRegA];
       end;
       iocDyadicFunction: begin
         if LRegD <> regZero then

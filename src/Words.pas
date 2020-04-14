@@ -15,7 +15,6 @@ type
 function WordEncode(ATrits: TTritArray): TWord;
 function WordDecode(AWord: TWord): TTritArray;
 function WordToStr(AWord: TWord): String;
-function WordApplyMonadicFunction(AWord: TWord; AFunction: TTritMonadicFunction): TWord;
 function WordApplyDyadicFunction(ALeftWord: TWord; ARightWord: TWord; AFunction: TTritDyadicFunction): TWord;
 function WordShift(AWord: TWord; AShift: Integer): TWord;
 function WordRotate(AWord: TWord; AShift: Integer): TWord;
@@ -30,7 +29,6 @@ type
 function HalfWordEncode(ATrits: TTritArray): THalfWord;
 function HalfWordDecode(AWord: THalfWord): TTritArray;
 function HalfWordToStr(AWord: THalfWord): String;
-function HalfWordApplyMonadicFunction(AWord: THalfWord; AFunction: TTritMonadicFunction): THalfWord;
 function HalfWordApplyDyadicFunction(ALeftWord: THalfWord; ARightWord: THalfWord; AFunction: TTritDyadicFunction): THalfWord;
 function HalfWordShift(AWord: THalfWord; AShift: Integer): THalfWord;
 function HalfWordRotate(AWord: THalfWord; AShift: Integer): THalfWord;
@@ -45,7 +43,6 @@ type
 function QuarterWordEncode(ATrits: TTritArray): TQuarterWord;
 function QuarterWordDecode(AWord: TQuarterWord): TTritArray;
 function QuarterWordToStr(AWord: TQuarterWord): String;
-function QuarterWordApplyMonadicFunction(AWord: TQuarterWord; AFunction: TTritMonadicFunction): TQuarterWord;
 function QuarterWordApplyDyadicFunction(ALeftWord: TQuarterWord; ARightWord: TQuarterWord; AFunction: TTritDyadicFunction): TQuarterWord;
 function QuarterWordShift(AWord: TQuarterWord; AShift: Integer): TQuarterWord;
 function QuarterWordRotate(AWord: TQuarterWord; AShift: Integer): TQuarterWord;
@@ -119,19 +116,6 @@ begin
   for LIndex := ATritCount - 1 downto 0 do
     GenericToStr += CTritToStr[LTrits[LIndex]];
   GenericToStr += ']';
-end;
-
-function GenericApplyMonadicFunction(AWord: TGenericWord; ATritCount: Integer; AFunction: TTritMonadicFunction): TGenericWord;
-var
-  LIndex: Integer;
-  LTrits: TTritArray;
-begin
-  LTrits := GenericDecode(AWord, ATritCount);
-
-  for LIndex := 0 to ATritCount - 1 do
-    LTrits[LIndex] := AFunction[LTrits[LIndex]];
-
-  GenericApplyMonadicFunction := GenericEncode(LTrits, ATritCount);
 end;
 
 function GenericApplyDyadicFunction(ALeftWord: TGenericWord; ARightWord: TGenericWord; ATritCount: Integer; AFunction: TTritDyadicFunction): TGenericWord;
@@ -211,11 +195,6 @@ begin
   WordToStr := GenericToStr(AWord, CWordTritCount);
 end;
 
-function WordApplyMonadicFunction(AWord: TWord; AFunction: TTritMonadicFunction): TWord;
-begin
-  WordApplyMonadicFunction := GenericApplyMonadicFunction(AWord, CWordTritCount, AFunction);
-end;
-
 function WordApplyDyadicFunction(ALeftWord: TWord; ARightWord: TWord; AFunction: TTritDyadicFunction): TWord;
 begin
   WordApplyDyadicFunction := GenericApplyDyadicFunction(ALeftWord, ARightWord, CWordTritCount, AFunction);
@@ -248,11 +227,6 @@ begin
   HalfWordToStr := GenericToStr(AWord, CHalfWordTritCount);
 end;
 
-function HalfWordApplyMonadicFunction(AWord: THalfWord; AFunction: TTritMonadicFunction): THalfWord;
-begin
-  HalfWordApplyMonadicFunction := GenericApplyMonadicFunction(AWord, CHalfWordTritCount, AFunction);
-end;
-
 function HalfWordApplyDyadicFunction(ALeftWord: THalfWord; ARightWord: THalfWord; AFunction: TTritDyadicFunction): THalfWord;
 begin
   HalfWordApplyDyadicFunction := GenericApplyDyadicFunction(ALeftWord, ARightWord, CHalfWordTritCount, AFunction);
@@ -283,11 +257,6 @@ end;
 function QuarterWordToStr(AWord: TQuarterWord): String;
 begin
   QuarterWordToStr := GenericToStr(AWord, CQuarterWordTritCount);
-end;
-
-function QuarterWordApplyMonadicFunction(AWord: TQuarterWord; AFunction: TTritMonadicFunction): TQuarterWord;
-begin
-  QuarterWordApplyMonadicFunction := GenericApplyMonadicFunction(AWord, CQuarterWordTritCount, AFunction);
 end;
 
 function QuarterWordApplyDyadicFunction(ALeftWord: TQuarterWord; ARightWord: TQuarterWord; AFunction: TTritDyadicFunction): TQuarterWord;

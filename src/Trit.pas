@@ -11,20 +11,6 @@ const
 type
   TTritArray = array of TTrit;
 
-{ Monadic functions }
-
-type
-  TTritMonadicFunction = array[TTrit] of TTrit;
-
-const
-  CTritFunctionIdentity:    TTritMonadicFunction = (-1,  0,  1);
-  CTritFunctionNegation:    TTritMonadicFunction = ( 1,  0, -1);
-  CTritFunctionIncrement:   TTritMonadicFunction = ( 0,  1, -1);
-  CTritFunctionDecrement:   TTritMonadicFunction = ( 1, -1,  0);
-  CTritFunctionSelectMinus: TTritMonadicFunction = ( 1, -1, -1);
-  CTritFunctionSelectZero:  TTritMonadicFunction = (-1,  1, -1);
-  CTritFunctionSelectPlus:  TTritMonadicFunction = (-1, -1,  1);
-
 { Dyadic functions }
 
 type
