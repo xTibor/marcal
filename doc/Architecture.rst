@@ -260,8 +260,8 @@ Pseudoinstructions
 | SUBR RD RA RB     || NEGR RD RB       | RD := RA - RB                        |
 |                   || ADDR RD RD RA    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| STACK SP RD -1    || ADDQ RD SP -1    | Load a word from stack SP            |
-|                   || LDMR RD RD S0    | to register RD from the              |
+| STACK SP RD -1    || LDLH RD -1       | Load a word from stack SP            |
+|                   || LDMR RD SP RD    | to register RD from the              |
 |                   |                   | specified index                      |
 +-------------------+-------------------+--------------------------------------+
 
