@@ -84,29 +84,27 @@ begin
 end;
 
 function GenericDecode(AWord: TGenericWord; ATritCount: Integer): TTritArray;
+const
+  CUnbalancedToBalanced: array[Boolean, 0..2] of TTrit = (
+    ( 0,  1, -1), { Positive }
+    ( 0, -1,  1)  { Negative }
+  );
 var
-  LNegative: Boolean;
   LIndex: Integer;
-  LBalancedTrit: Integer;
+  LNegative: Boolean;
+  LUnbalancedTrit: Integer;
 begin
   LNegative := AWord < 0;
   AWord := Abs(AWord);
   SetLength(GenericDecode, ATritCount);
 
   for LIndex := 0 to ATritCount - 1 do begin
-    LBalancedTrit := AWord mod 3;
+    LUnbalancedTrit := AWord mod 3;
     AWord := AWord div 3;
 
-    if LBalancedTrit = 2 then begin
-      GenericDecode[LIndex] := -1;
+    GenericDecode[LIndex] := CUnbalancedToBalanced[LNegative, LUnbalancedTrit];
+    if LUnbalancedTrit = 2 then
       AWord += 1;
-    end else
-      GenericDecode[LIndex] := LBalancedTrit;
-  end;
-
-  if LNegative then begin
-    for LIndex := 0 to ATritCount - 1 do
-      GenericDecode[LIndex] := CTritFunctionNegation[GenericDecode[LIndex]];
   end;
 end;
 
