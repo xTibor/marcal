@@ -185,7 +185,7 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 |  -1 | RGTR   | DYAD RD RA RB     | Dyadic function.                          |
 |     |        |                   |                                           |
-|     |        |                   | See: `Dyadic function`_ subsection        |
+|     |        |                   | See: `The dyadic function`_ subsection    |
 +-----+--------+-------------------+-------------------------------------------+
 |   0 | RGTR   | ADDR RD RA RB     | Add register to register.                 |
 |     |        |                   |                                           |
@@ -234,35 +234,8 @@ Base Instruction Set
 |  13 | RGTR   | CALL SP RA        | Call subroutine RA using stack SP         |
 +-----+--------+-------------------+-------------------------------------------+
 
-Dyadic function
-...............
-
-TODO:
-  Dyadic functions: DYAD RD RA RB
-    In:
-      RD: Register containing the truth table
-      RA: Argument value register
-      RB: Argument value register
-    Out:
-      RD: Output value register
-      RD := TruthTable(RD)[RA, RB]
-    Truth table representation:
-            RB RB RB
-            [-][0][+]
-      RA [-] a  b  c
-      RA [0] d  e  f
-      RA [+] g  h  i
-      where RD := [000ihgfedcba]
-
-  Shift/Rotate:
-    Operates in a +12 .. -12 range
-    Outside it has an undefined behaviour
-
 Pseudoinstructions
 ------------------
-
-General Pseudoinstructions
-..........................
 
 +-------------------+-------------------+--------------------------------------+
 | Pseudoinstruction | Expansion         | Description                          |
@@ -292,120 +265,161 @@ General Pseudoinstructions
 |                   |                   | specified index                      |
 +-------------------+-------------------+--------------------------------------+
 
-Dyadic Pseudoinstructions
-.........................
+The dyadic function
+-------------------
 
-TODO: Move to DYAD
+DYAD RD RA RB
+
+The DYAD instruction can be used to perform any of the 19683 possible
+ternary logic functions by specifying the operations' truth table in the RD
+register. Upon execution the truth table specified in RD is overwritten by
+the result of the operation.
+
+
+Truth table representation
+..........................
+
++---------+--------------+
+|         |      RB      |
+|         +----+----+----+
+|         || - || 0 || + |
++----+----+----+----+----+
+|    || - || A || B || C |
+|    +----+----+----+----+
+| RA || 0 || D || E || F |
+|    +----+----+----+----+
+|    || + || G || H || I |
++----+----+----+----+----+
+
+Truth table value := [000IHGFEDCBA]
+
+The top three trits of the truth table value are always 0.
+
+Common dyadic functions
+.......................
 
 +-------------------+-------------------+--------------------------------------+
-| Pseudoinstruction | Expansion         | Description                          |
-+-------------------+-------------------+--------------------------------------+
-| AND RD RA RB      || LDHH RD 8        | LogicalAnd                           |
+| Truth table value | Usage             | Description                          |
++===================+===================+======================================+
+|              5792 || LDHH RD 8        | Logical AND                          |
 |                   || ADDH RD -40      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| NAND RD RA RB     || LDHH RD -8       | LogicalNand                          |
+|             -5792 || LDHH RD -8       | Logical NAND                         |
 |                   || ADDH RD 40       |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| OR RD RA RB       || LDHH RD 13       | LogicalOr                            |
+|              9728 || LDHH RD 13       | Logical OR                           |
 |                   || ADDH RD 251      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| NOR RD RA RB      || LDHH RD -13      | LogicalNor                           |
+|             -9728 || LDHH RD -13      | Logical NOR                          |
 |                   || ADDH RD -251     |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| XOR RD RA RB      || LDHH RD -8       | LogicalXor                           |
+|             -5824 || LDHH RD -8       | Logical XOR                          |
 |                   || ADDH RD 8        |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| XNOR RD RA RB     || LDHH RD 8        | LogicalXnor                          |
+|              5824 || LDHH RD 8        | Logical XNOR                         |
 |                   || ADDH RD -8       |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TEQ RD RA RB      || LDHH RD 5        | Equality                             |
+|              3445 || LDHH RD 5        | Equality                             |
 |                   || ADDH RD -200     |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TLT RD RA RB      || LDHH RD -13      | LessThan                             |
+|             -3445 || LDHH RD -5       | Inequality                           |
+|                   || ADDH RD 200      |                                      |
+|                   || DYAD RD RA RB    |                                      |
++-------------------+-------------------+--------------------------------------+
+|             -9331 || LDHH RD -13      | Less than                            |
 |                   || ADDH RD 146      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TLE RD RA RB      || LDHH RD 5        | LessEqualsThan                       |
+|              3955 || LDHH RD 5        | Less than or equals                  |
 |                   || ADDH RD 310      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TGT RD RA RB      || LDHH RD -5       | GreaterThan                          |
+|             -3955 || LDHH RD -5       | Greater than                         |
 |                   || ADDH RD -310     |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TGE RD RA RB      || LDHH RD 13       | GreaterEqualsThan                    |
+|              9331 || LDHH RD 13       | Greater than or equals               |
 |                   || ADDH RD -146     |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| CSS RD RA RB      || LDHH RD 9        | Consensus                            |
+|              6560 || LDHH RD 9        | Consensus                            |
 |                   || ADDH RD -1       |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| ANY RD RA RB      || LDHH RD 12       | AcceptAnything                       |
+|              8960 || LDHH RD 12       | Accept anything                      |
 |                   || ADDH RD 212      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| KIMP RD RA RB     || LDHH RD 8        | KleeneImplication                    |
+|              6088 || LDHH RD 8        | Kleene implication                   |
 |                   || ADDH RD 256      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-| LIMP RD RA RB     || LDHH RD 8        | LukasiewiczImplication               |
+|              6169 || LDHH RD 8        | Lukasiewicz implication              |
 |                   || ADDH RD 337      |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
 
-Monadic Pseudoinstructions
-..........................
+Common monadic functions
+........................
 
-TODO: Move to DYAD
+Monadic functions can also be performed with DYAD by setting the second operand
+register to ZERO.
 
 +-------------------+-------------------+--------------------------------------+
-| Pseudoinstruction | Expansion         | Description                          |
+| Truth table value | Usage             | Description                          |
++===================+===================+======================================+
+|             -2184 || LDHH RD -3       | Inversion                            |
+|                   || ADDH RD 3        |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| NTI RD RA         || LDHH RD -3       | NegativeThresholdInvert              |
+|             -2265 || LDHH RD -3       | Negative threshold inversion         |
 |                   || ADDH RD -78      |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| PTI RD RA         || LDHH RD -3       | PositiveThresholdInvert              |
+|             -2103 || LDHH RD -3       | Positive threshold inversion         |
 |                   || ADDH RD 84       |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TWI RD RA         || LDHH RD -3       | TritwiseIncrement                    |
+|             -2106 || LDHH RD -3       | Increment                            |
 |                   || ADDH RD 81       |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TWD RD RA         || LDHH RD 0        | TritwiseDecrement                    |
+|               -78 || LDHH RD 0        | Decrement                            |
 |                   || ADDH RD -78      |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TIF RD RA         || LDHH RD -3       | TritwiseIsFalse                      |
+|             -2265 || LDHH RD -3       | Is false?                            |
 |                   || ADDH RD -78      |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TIU RD RA         || LDHH RD -3       | TritwiseIsUnknown                    |
+|             -2109 || LDHH RD -3       | Is unknown?                          |
 |                   || ADDH RD 78       |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TIT RD RA         || LDHH RD 3        | TritwiseIsTrue                       |
+|              2103 || LDHH RD 3        | Is true?                             |
 |                   || ADDH RD -84      |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TCD RD RA         || LDHH RD 0        | TritwiseClampDown                    |
+|                -3 || LDHH RD 0        | Clamp down                           |
 |                   || ADDH RD -3       |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
-| TCU RD RA         || LDHH RD 3        | TritwiseClampUp                      |
+|              2187 || LDHH RD 3        | Clamp up                             |
 |                   || ADDH RD 0        |                                      |
-|                   || DYAD RD RA S0    |                                      |
+|                   || DYAD RD RA ZERO  |                                      |
 +-------------------+-------------------+--------------------------------------+
 
+
+Shift/Rotate:
+  Operates in a +12 .. -12 range
+  Outside it has an undefined behaviour
 
 TODO:
   Integer overflow -> undefined
