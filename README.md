@@ -1,3 +1,3 @@
 # MARCAL
 
-A ternary RISC machine.
+A balanced ternary RISC machine.
