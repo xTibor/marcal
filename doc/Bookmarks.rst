@@ -24,6 +24,15 @@ Free Pascal
 - | 1 Compiler directives
   | https://www.freepascal.org/docs-html/prog/progch1.html
 
+- | TFPGMap
+  | https://www.freepascal.org/docs-html/current/rtl/fgl/tfpgmap.html
+
+- | Reference for unit 'strutils': Procedures and functions
+  | https://www.freepascal.org/docs-html/current/rtl/strutils/index-5.html
+
+- | Reference for unit 'sysutils': Procedures and functions
+  | https://www.freepascal.org/docs-html/current/rtl/sysutils/index-5.html
+
 reStructuredText
 ----------------
 - | reStructuredText Markup Specification

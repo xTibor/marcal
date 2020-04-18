@@ -10,6 +10,8 @@ EXAMPLES := \
 run: $(TOOLS) $(EXAMPLES)
 	build/Emulator build/Example01.t
 
+asm: $(TOOLS) $(EXAMPLES)
+
 build/% : src/%.pas
 	fpc -gl -FEbuild $<
 

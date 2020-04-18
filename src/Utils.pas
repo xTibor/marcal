@@ -11,6 +11,9 @@ function Modulo(AValue: LongInt; ADivisor: LongInt): LongInt;
 { The standard library has everything but a usable Split() function }
 function Split(AString: String): TStringArray;
 
+{ Chomps N characters from the start of the given string }
+function ChompLeft(var AString: String; ACount: LongInt): String;
+
 implementation
 
 function Modulo(AValue: LongInt; ADivisor: LongInt): LongInt;
@@ -44,6 +47,12 @@ begin
       LStringIndex += 1;
     end;
   end;
+end;
+
+function ChompLeft(var AString: String; ACount: LongInt): String;
+begin
+  ChompLeft := Copy(AString, 1, ACount);
+  Delete(AString, 1, ACount);
 end;
 
 end.

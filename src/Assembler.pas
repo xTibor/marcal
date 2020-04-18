@@ -4,7 +4,16 @@
 program Assembler;
 
 uses
-  Trit, Words, Arch, Utils, SysUtils;
+  Trit, Words, Arch, Utils, SysUtils, Fgl, StrUtils;
+
+type
+  TSymbolTable = specialize TFPGMap<String, TWord>;
+
+const
+  CLabelWidth       = 11;
+  CInstructionWidth = 35;
+  CCommentWidth     = 35;
+  CLineWidth = CLabelWidth + CInstructionWidth + CCommentWidth;
 
 function EncodeInstructionRgtr(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister): TWord;
 begin
@@ -35,11 +44,16 @@ end;
 var
   GInputFile: TextFile;
   GOutputFile: TextFile;
+  GSymbolTable: TSymbolTable;
   GLine: String;
-  GLineSplit: TStringArray;
+  GStrLabel: String;
+  GStrInstruction: String;
+  GStrComment: String;
+  GParts: TStringArray;
   GOpcode: TInstructionOpcode;
   GProgramCounter: TWord;
   GInstruction: TWord;
+  GIndex: Integer;
 
 begin
   if ParamCount() <> 2 then begin
@@ -53,36 +67,55 @@ begin
   Rewrite(GOutputFile);
 
   GProgramCounter := 0;
+  GSymbolTable := TSymbolTable.Create();
 
   while not Eof(GInputFile) do begin
     ReadLn(GInputFile, GLine);
-    GLineSplit := Split(GLine);
 
-    GOpcode := StrToInstructionOpcode(GLineSplit[0]);
-    case CInstructionFormats[GOpcode] of
-      ifRegister:
-        GInstruction := EncodeInstructionRgtr(
-          GOpcode,
-          StrToRegister(GLineSplit[1]),
-          StrToRegister(GLineSplit[2]),
-          StrToRegister(GLineSplit[3]));
-      ifImmediate3:
-        GInstruction := EncodeInstructionImm3(
-          GOpcode,
-          StrToRegister(GLineSplit[1]),
-          StrToRegister(GLineSplit[2]),
-          StrToInt(GLineSplit[3]));
-      ifImmediate6:
-        GInstruction := EncodeInstructionImm6(
-          GOpcode,
-          StrToRegister(GLineSplit[1]),
-          StrToInt(GLineSplit[2]));
+    GLine := PadRight(GLine, CLineWidth);
+    GLine := Copy(GLine, 1, CLineWidth);
+
+    GStrLabel       := Trim(ChompLeft(GLine, CLabelWidth      ));
+    GStrInstruction := Trim(ChompLeft(GLine, CInstructionWidth));
+    GStrComment     := Trim(ChompLeft(GLine, CCommentWidth    ));
+
+    if GStrLabel <> '' then begin
+      GSymbolTable.Add(GStrLabel, GProgramCounter);
     end;
 
-    WriteLn(GOutputFile, GProgramCounter, ' ', GInstruction);
-    GProgramCounter += 1;
+    if GStrInstruction <> '' then begin
+      GParts := Split(GStrInstruction);
+
+      GOpcode := StrToInstructionOpcode(GParts[0]);
+      case CInstructionFormats[GOpcode] of
+        ifRegister:
+          GInstruction := EncodeInstructionRgtr(
+            GOpcode,
+            StrToRegister(GParts[1]),
+            StrToRegister(GParts[2]),
+            StrToRegister(GParts[3]));
+        ifImmediate3:
+          GInstruction := EncodeInstructionImm3(
+            GOpcode,
+            StrToRegister(GParts[1]),
+            StrToRegister(GParts[2]),
+            StrToInt(GParts[3]));
+        ifImmediate6:
+          GInstruction := EncodeInstructionImm6(
+            GOpcode,
+            StrToRegister(GParts[1]),
+            StrToInt(GParts[2]));
+      end;
+
+      WriteLn(GOutputFile, GProgramCounter, ' ', GInstruction);
+      GProgramCounter += 1;
+    end;
   end;
 
   Close(GInputFile);
   Close(GOutputFile);
+
+  for GIndex := 0 to GSymbolTable.Count - 1 do begin
+    WriteLn(Format('%:-*s%d', [CLabelWidth, GSymbolTable.Keys[GIndex], GSymbolTable.Data[GIndex]]));
+  end;
 end.
