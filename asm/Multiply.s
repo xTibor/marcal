@@ -14,7 +14,7 @@ LOOPSTART  NEGR U6 U4 ZERO                    GET THE NTH BIT OF OPERAND B
            LSHR U6 U2 U6
            LSHI U6 U6 11
            LSHI U6 U6 -11
-EXPAND     ADDQ U7 PC 4                       EXPAND THE LEFTMOST TRIT
+EXPAND     ADDQ U7 PC 4                       EXPAND THE RIGHTMOST TRIT
            BRLE U7 U6 ZERO
            LDHH U6 364
            ADDH U6 364
