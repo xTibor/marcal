@@ -78,7 +78,11 @@ begin
         if LRegD <> regZero then
           Registers[LRegD] := WordRotate(Registers[LRegA], Registers[LRegB]);
       end;
-      iocShift: begin
+      iocShiftImmediate: begin
+        if LRegD <> regZero then
+          Registers[LRegD] := WordShift(Registers[LRegA], LImmediateQuarter);
+      end;
+      iocShiftRegister: begin
         if LRegD <> regZero then
           Registers[LRegD] := WordShift(Registers[LRegA], Registers[LRegB]);
       end;

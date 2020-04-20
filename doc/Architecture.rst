@@ -169,13 +169,15 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 |  -6 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -5 |        |                   | Undefined instruction.                    |
-+-----+--------+-------------------+-------------------------------------------+
-|  -4 | RGTR   | ROTR RD RA RB     | Rotate register left.                     |
+|  -5 | RGTR   | ROTR RD RA RB     | Rotate register left.                     |
 |     |        |                   |                                           |
 |     |        |                   | RD := RA <rot< RB                         |
 +-----+--------+-------------------+-------------------------------------------+
-|  -3 | RGTR   | LSHR RD RA RB     | Shift register left.                      |
+|  -4 | IMM3   | LSHI RD RA 12     | Shift register left with immediate.       |
+|     |        |                   |                                           |
+|     |        |                   | RD := RA << Imm                           |
++-----+--------+-------------------+-------------------------------------------+
+|  -3 | RGTR   | LSHR RD RA RB     | Shift register left with register.        |
 |     |        |                   |                                           |
 |     |        |                   | RD := RA << RB                            |
 +-----+--------+-------------------+-------------------------------------------+
@@ -263,6 +265,14 @@ Pseudoinstructions
 | STACK SP RD -1    || LDLH RD -1       | Load a word from stack SP            |
 |                   || LDMR RD SP RD    | to register RD from the              |
 |                   |                   | specified index                      |
++-------------------+-------------------+--------------------------------------+
+| MASK RD RA 4      || LSHI RD RA 8     | Masking the N leftmost trits.        |
+|                   || LSHI RD RD -8    | The shift amount for N trits is      |
+|                   |                   | (12 - N) and -(12 - N)               |
+|                   |                   |                                      |
+|                   |                   | DYAD could also be used for this,    |
+|                   |                   | however it's less effective with     |
+|                   |                   | register clobbering.                 |
 +-------------------+-------------------+--------------------------------------+
 
 The dyadic function
