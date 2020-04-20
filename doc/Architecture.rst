@@ -321,7 +321,7 @@ Common dyadic functions
 |                   || ADDH RD 8        |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
-|              5824 || LDHH RD 8        | Logical XNOR                         |
+|              5824 || LDHH RD 8        | Logical XNOR / Multiplication        |
 |                   || ADDH RD -8       |                                      |
 |                   || DYAD RD RA RB    |                                      |
 +-------------------+-------------------+--------------------------------------+
