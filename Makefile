@@ -5,10 +5,11 @@ TOOLS := \
 EXAMPLES := \
 	build/Example01.t \
 	build/Example02.t \
-	build/Example03.t
+	build/Example03.t \
+	build/Multiply.t
 
 run: $(TOOLS) $(EXAMPLES)
-	build/Emulator build/Example01.t
+	build/Emulator build/Multiply.t
 
 asm: $(TOOLS) $(EXAMPLES)
 
