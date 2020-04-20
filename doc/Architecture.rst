@@ -254,6 +254,13 @@ Pseudoinstructions
 +-------------------+-------------------+--------------------------------------+
 | LDW RD -264992    || LDHH RD -364     | Load immediate word to RD            |
 |                   || ADDH RD 364      |                                      |
+|                   |                   | The PC register cannot be used as    |
+|                   |                   | the RD argument. Unconditional jumps |
+|                   |                   | can be implemented with this however |
+|                   |                   | the jump addresses first must be     |
+|                   |                   | loaded into a non-special purpose    |
+|                   |                   | register, then transferred to PC     |
+|                   |                   | with a single instruction.           |
 +-------------------+-------------------+--------------------------------------+
 | LDM RD 212686     || LDHH RD 292      | Load word from address to            |
 |                   || ADDH RD -182     | register RD                          |
