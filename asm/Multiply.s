@@ -34,4 +34,5 @@ SHIFTADD   ADDR U7 U5 ZERO                    LOAD TRUTH TABLE
 LOOPNEXT   ADDH U4 -1                         STEP THE COUNTER
            BRLE U10 ZERO U4                   BRANCH TO LOOPSTART
 
+           UD12 U3 ZERO ZERO
 HALT       UD13 ZERO ZERO ZERO

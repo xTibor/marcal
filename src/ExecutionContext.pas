@@ -74,6 +74,17 @@ begin
     Registers[regProgramCounter] += 1;
 
     case LOpcode of
+      iocUndefined13: begin
+        { Temporary halt instruction }
+        { Will be handled by some memory-mapped power management controller in the future }
+        Halt := true;
+      end;
+      iocUndefined12: begin
+        { Temporary debug output instruction }
+        { Will be handled by some memory-mapped I/O controller in the future }
+        WriteLn('Output: ', Registers[LRegD]);
+        WriteLn();
+      end;
       iocRotate: begin
         if LRegD <> regZero then
           Registers[LRegD] := WordRotate(Registers[LRegA], Registers[LRegB]);
@@ -155,9 +166,6 @@ begin
         if LRegD <> regZero then
           Registers[LRegD] += 1;
         Registers[regProgramCounter] := Registers[LRegA];
-      end;
-      else begin
-        Halt := true;
       end;
     end;
   end;
