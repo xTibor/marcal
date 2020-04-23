@@ -62,6 +62,7 @@ var
   GStrLabel: String;
   GStrInstruction: String;
 
+  GPcRelative: Boolean;
   GStrParts: TStringArray;
   GWordParts: array of TWord;
   GInteger: LongInt;
@@ -130,9 +131,17 @@ begin
           continue;
         end;
 
+        { Is the symbol PC-relative? }
+        GPcRelative := GStrParts[GIndex][1] = '''';
+        if GPcRelative then
+          Delete(GStrParts[GIndex], 1, 1);
+
         { Is it a known symbol? }
         if GSymbolTable.IndexOf(GStrParts[GIndex]) <> -1 then begin
-          GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
+          if GPcRelative then
+            GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]] - (GProgramCounter + 1)
+          else
+            GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
           continue;
         end;
 

@@ -11,9 +11,9 @@ INITMULT   LDLH U4 11                         COUNTER
            LDLH U7 0                          TEMPORARY 2
            LDHH U8 364                        PATTERN WITH EVERY TRIT SET
            ADDH U8 364
-           ADDQ U9 PC 10                      BRANCH TARGET 1
-           ADDQ U10 PC 1                      BRANCH TARGET 2
-           ADDQ U11 PC 13                     BRANCH TARGET 3
+           ADDQ U9 PC 'EXPMINUS               BRANCH TARGET 1
+           ADDQ U10 PC 'LOOPSTART             BRANCH TARGET 2
+           ADDQ U11 PC 'LOOPNEXT              BRANCH TARGET 3
 
 LOOPSTART  NEGR U6 U4 ZERO                    GET THE NTH BIT OF OPERAND B
            LSHR U6 U2 U6
