@@ -30,12 +30,12 @@ MULTIPLY   PUSH S2 U4 ZERO
            PUSH S2 U11 ZERO
            LDLH U3 0                          RESULT
            LDLH U4 11                         COUNTER
-           LDHH U5 8                          MULTIPLICATION TRUTH TABLE
-           ADDH U5 -8
+           LDHH U5 >5824                      MULTIPLICATION TRUTH TABLE
+           ADDH U5 <5824
            LDLH U6 0                          TEMPORARY 1
            LDLH U7 0                          TEMPORARY 2
-           LDHH U8 364                        PATTERN WITH EVERY TRIT SET
-           ADDH U8 364
+           LDHH U8 >265720                    TRIT PATTERN WITH EVERY TRIT SET
+           ADDH U8 <265720
            ADDQ U9 PC 'EXPMINUS               BRANCH TARGET 1
            ADDQ U10 PC 'LOOPSTART             BRANCH TARGET 2
            ADDQ U11 PC 'LOOPNEXT              BRANCH TARGET 3

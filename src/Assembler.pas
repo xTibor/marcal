@@ -15,6 +15,14 @@ const
   CCommentWidth     = 35;
   CLineWidth = CLabelWidth + CInstructionWidth + CCommentWidth;
 
+type
+  TAssemblerFunction = (
+    afNone,
+    afPcRelative,
+    afLowHalf,
+    afHighHalf
+  );
+
 function EncodeInstructionRgtr(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister): TWord;
 begin
   EncodeInstructionRgtr :=
@@ -62,7 +70,8 @@ var
   GStrLabel: String;
   GStrInstruction: String;
 
-  GPcRelative: Boolean;
+  GFunction: TAssemblerFunction;
+  GHalfWords: THalfWordArray;
   GStrParts: TStringArray;
   GWordParts: array of TWord;
   GInteger: LongInt;
@@ -101,7 +110,7 @@ begin
     if GStrLabel <> '' then begin
       if GSymbolTable.IndexOf(GStrLabel) <> -1 then begin
         WriteLn(Format('Symbol redefinition at line %d: %s', [GLineIndex + 1, GStrLabel]));
-        Exit();
+        Halt(1);
       end;
 
       GSymbolTable.Add(GStrLabel, GProgramCounter);
@@ -125,30 +134,46 @@ begin
 
       SetLength(GWordParts, Length(GStrParts));
       for GIndex := Low(GStrParts) to High(GStrParts) do begin
-        { Is it a number? }
-        if TryStrToInt(GStrParts[GIndex], GInteger) then begin
-          GWordParts[GIndex] := TWord(GInteger);
-          continue;
+        { Read function markers }
+        case GStrParts[GIndex][1] of
+          '''': GFunction := afPcRelative;
+          '>':  GFunction := afHighHalf;
+          '<':  GFunction := afLowHalf;
+          else  GFunction := afNone;
         end;
 
-        { Is the symbol PC-relative? }
-        GPcRelative := GStrParts[GIndex][1] = '''';
-        if GPcRelative then
+        if GFunction <> afNone then
           Delete(GStrParts[GIndex], 1, 1);
 
-        { Is it a known symbol? }
-        if GSymbolTable.IndexOf(GStrParts[GIndex]) <> -1 then begin
-          if GPcRelative then
-            GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]] - (GProgramCounter + 1)
-          else
-            GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
-          continue;
+        if TryStrToInt(GStrParts[GIndex], GInteger) then begin
+          { Is it a number? }
+          GWordParts[GIndex] := TWord(GInteger);
+        end else if GSymbolTable.IndexOf(GStrParts[GIndex]) <> -1 then begin
+          { Is it a known symbol? }
+          GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
+        end else begin
+          { Unknown }
+          WriteLn(Format('Syntax error at line %d: %s', [GLineIndex + 1, GStrParts[GIndex]]));
+          Halt(1);
         end;
 
-        WriteLn(Format('Syntax error at line %d: %s', [GLineIndex + 1, GStrParts[GIndex]]));
-        Exit();
+        { Apply function }
+        case GFunction of
+          afPcRelative: begin
+            GWordParts[GIndex] := GWordParts[GIndex] - (GProgramCounter + 1);
+          end;
+          afHighHalf: begin
+            GHalfWords := WordToHalfWords(GWordParts[GIndex]);
+            GWordParts[GIndex] := GHalfWords[1];
+          end;
+          afLowHalf: begin
+            GHalfWords := WordToHalfWords(GWordParts[GIndex]);
+            GWordParts[GIndex] := GHalfWords[0];
+          end;
+        end;
       end;
 
+      { Emit the instruction }
       case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
         ifRegister:
           GInstruction := EncodeInstructionRgtr(
