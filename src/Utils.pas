@@ -14,6 +14,8 @@ function Split(AString: String): TStringArray;
 { Chomps N characters from the start of the given string }
 function ChompLeft(var AString: String; ACount: LongInt): String;
 
+function ReadFileByLines(APath: String): TStringArray;
+
 implementation
 
 function Modulo(AValue: LongInt; ADivisor: LongInt): LongInt;
@@ -53,6 +55,21 @@ function ChompLeft(var AString: String; ACount: LongInt): String;
 begin
   ChompLeft := Copy(AString, 1, ACount);
   Delete(AString, 1, ACount);
+end;
+
+function ReadFileByLines(APath: String): TStringArray;
+var
+  LFile: TextFile;
+begin
+  SetLength(ReadFileByLines, 0);
+
+  Assign(LFile, APath);
+  Reset(LFile);
+  while not Eof(LFile) do begin
+    SetLength(ReadFileByLines, Length(ReadFileByLines) + 1);
+    ReadLn(LFile, ReadFileByLines[Length(ReadFileByLines) - 1]);
+  end;
+  Close(LFile);
 end;
 
 end.

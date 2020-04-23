@@ -125,38 +125,9 @@ const
     ('S13',  '',    ''  )
   );
 
-function StrToInstructionOpcode(AMnemonic: String): TInstructionOpcode;
-function StrToRegister(ARegisterName: String): TRegister;
 function RegisterToStr(ARegister: TRegister): String;
 
 implementation
-
-function StrToInstructionOpcode(AMnemonic: String): TInstructionOpcode;
-var
-  LIndex: TInstructionOpcode;
-begin
-  for LIndex := Low(TInstructionOpcode) to High(TInstructionOpcode) do begin
-    if CInstructionMnemonics[LIndex] = AMnemonic then
-      Exit(LIndex);
-  end;
-  // Assert
-end;
-
-function StrToRegister(ARegisterName: String): TRegister;
-var
-  LIndex: TRegister;
-  LAliasIndex: Integer;
-begin
-  for LIndex := Low(TRegister) to High(TRegister) do begin
-    for LAliasIndex := Low(CRegisterNames[LIndex]) to High(CRegisterNames[LIndex]) do begin
-      if CRegisterNames[LIndex, LAliasIndex] = '' then
-        Continue;
-      if CRegisterNames[LIndex, LAliasIndex] = ARegisterName then
-        Exit(LIndex);
-    end;
-  end;
-  // Assert
-end;
 
 function RegisterToStr(ARegister: TRegister): String;
 begin

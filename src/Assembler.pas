@@ -41,70 +41,123 @@ begin
     (LongInt(AImmediate) *     1);  { << 0 }
 end;
 
+procedure SplitLine(ALine: String; var ALabel: String; var AInstruction: String);
+begin
+  ALine := PadRight(ALine, CLineWidth);
+  ALine := Copy(ALine, 1, CLineWidth);
+
+  ALabel       := Trim(ChompLeft(ALine, CLabelWidth      ));
+  AInstruction := Trim(ChompLeft(ALine, CInstructionWidth));
+end;
+
 var
-  GInputFile: TextFile;
   GOutputFile: TextFile;
+
+  GLines: TStringArray;
+  GLineIndex: Integer;
+
+  GProgramCounter: TWord;
   GSymbolTable: TSymbolTable;
-  GLine: String;
+
   GStrLabel: String;
   GStrInstruction: String;
-  GStrComment: String;
-  GParts: TStringArray;
-  GOpcode: TInstructionOpcode;
-  GProgramCounter: TWord;
-  GInstruction: TWord;
-  GIndex: Integer;
 
+  GStrParts: TStringArray;
+  GWordParts: array of TWord;
+  GInteger: LongInt;
+  GInstruction: TWord;
+
+  GIndex: Integer;
+  GRegisterIndex: TRegister;
+  GOpcodeIndex: TInstructionOpcode;
 begin
   if ParamCount() <> 2 then begin
     WriteLn('Usage: Assembler input.s output.t');
     Exit;
   end;
 
-  Assign(GInputFile, ParamStr(1));
-  Assign(GOutputFile, ParamStr(2));
-  Reset(GInputFile);
-  Rewrite(GOutputFile);
-
-  GProgramCounter := 0;
+  GLines := ReadFileByLines(ParamStr(1));
   GSymbolTable := TSymbolTable.Create();
 
-  while not Eof(GInputFile) do begin
-    ReadLn(GInputFile, GLine);
+  { Prefill symbol table }
 
-    GLine := PadRight(GLine, CLineWidth);
-    GLine := Copy(GLine, 1, CLineWidth);
+  for GOpcodeIndex := Low(TInstructionOpcode) to High(TInstructionOpcode) do
+    GSymbolTable.Add(CInstructionMnemonics[GOpcodeIndex], TWord(GOpcodeIndex));
 
-    GStrLabel       := Trim(ChompLeft(GLine, CLabelWidth      ));
-    GStrInstruction := Trim(ChompLeft(GLine, CInstructionWidth));
-    GStrComment     := Trim(ChompLeft(GLine, CCommentWidth    ));
+  for GRegisterIndex := Low(TRegister) to High(TRegister) do begin
+    for GIndex := Low(CRegisterNames[GRegisterIndex]) to High(CRegisterNames[GRegisterIndex]) do begin
+      if CRegisterNames[GRegisterIndex][GIndex] <> '' then
+        GSymbolTable.Add(CRegisterNames[GRegisterIndex][GIndex], TWord(GRegisterIndex));
+    end;
+  end;
+
+  { First pass: Find all symbols }
+
+  GProgramCounter := 0;
+  for GLineIndex := Low(GLines) to High(GLines) do begin
+    SplitLine(GLines[GLineIndex], GStrLabel, GStrInstruction);
 
     if GStrLabel <> '' then begin
+      if GSymbolTable.IndexOf(GStrLabel) <> -1 then begin
+        WriteLn(Format('Symbol redefinition at line %d: %s', [GLineIndex + 1, GStrLabel]));
+        Exit();
+      end;
+
       GSymbolTable.Add(GStrLabel, GProgramCounter);
     end;
 
-    if GStrInstruction <> '' then begin
-      GParts := Split(GStrInstruction);
+    if GStrInstruction <> '' then
+      GProgramCounter += 1;
+  end;
 
-      GOpcode := StrToInstructionOpcode(GParts[0]);
-      case CInstructionFormats[GOpcode] of
+  { Second pass: Assemble instructions }
+
+  Assign(GOutputFile, ParamStr(2));
+  Rewrite(GOutputFile);
+
+  GProgramCounter := 0;
+  for GLineIndex := Low(GLines) to High(GLines) do begin
+    SplitLine(GLines[GLineIndex], GStrLabel, GStrInstruction);
+
+    if GStrInstruction <> '' then begin
+      GStrParts := Split(GStrInstruction);
+
+      SetLength(GWordParts, Length(GStrParts));
+      for GIndex := Low(GStrParts) to High(GStrParts) do begin
+        { Is it a number? }
+        if TryStrToInt(GStrParts[GIndex], GInteger) then begin
+          GWordParts[GIndex] := TWord(GInteger);
+          continue;
+        end;
+
+        { Is it a known symbol? }
+        if GSymbolTable.IndexOf(GStrParts[GIndex]) <> -1 then begin
+          GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
+          continue;
+        end;
+
+        WriteLn(Format('Syntax error at line %d: %s', [GLineIndex + 1, GStrParts[GIndex]]));
+        Exit();
+      end;
+
+      case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
         ifRegister:
           GInstruction := EncodeInstructionRgtr(
-            GOpcode,
-            StrToRegister(GParts[1]),
-            StrToRegister(GParts[2]),
-            StrToRegister(GParts[3]));
+            TInstructionOpcode(GWordParts[0]),
+            TRegister(GWordParts[1]),
+            TRegister(GWordParts[2]),
+            TRegister(GWordParts[3]));
         ifImmediate3:
           GInstruction := EncodeInstructionImm3(
-            GOpcode,
-            StrToRegister(GParts[1]),
-            StrToRegister(GParts[2]),
-            StrToInt(GParts[3]));
+            TInstructionOpcode(GWordParts[0]),
+            TRegister(GWordParts[1]),
+            TRegister(GWordParts[2]),
+            TQuarterWord(GWordParts[3]));
         ifImmediate6:
           GInstruction := EncodeInstructionImm6(
-            GOpcode,
-            StrToRegister(GParts[1]),
-            StrToInt(GParts[2]));
+            TInstructionOpcode(GWordParts[0]),
+            TRegister(GWordParts[1]),
+            THalfWord(GWordParts[2]));
       end;
 
       WriteLn(GOutputFile, GProgramCounter, ' ', GInstruction);
@@ -112,10 +165,10 @@ begin
     end;
   end;
 
-  Close(GInputFile);
   Close(GOutputFile);
 
   for GIndex := 0 to GSymbolTable.Count - 1 do begin
     WriteLn(Format('%:-*s%d', [CLabelWidth, GSymbolTable.Keys[GIndex], GSymbolTable.Data[GIndex]]));
   end;
+
 end.
