@@ -132,6 +132,10 @@ begin
     if GStrInstruction <> '' then begin
       GStrParts := Split(GStrInstruction);
 
+      { Limit 4 parts per instruction }
+      if Length(GStrParts) > 4 then
+        SetLength(GStrParts, 4);
+
       SetLength(GWordParts, Length(GStrParts));
       for GIndex := Low(GStrParts) to High(GStrParts) do begin
         { Read function markers }
@@ -172,6 +176,9 @@ begin
           end;
         end;
       end;
+
+      { Implicit zero arguments }
+      SetLength(GWordParts, 4);
 
       { Emit the instruction }
       case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
