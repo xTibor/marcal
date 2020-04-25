@@ -18,9 +18,9 @@ type
     iocUndefined8           =  -8, { <??> - Undefined     }
     iocUndefined7           =  -7, { <??> - Undefined     }
     iocUndefined6           =  -6, { <??> - Undefined     }
-    iocRotate               =  -5, { RGTR - ROTR RD RA RB }
-    iocShiftImmediate       =  -4, { IMM3 - LSHI RD RA 12 }
-    iocShiftRegister        =  -3, { RGTR - LSHR RD RA RB }
+    iocRotate               =  -5, { RGTR - ROLR RD RA RB }
+    iocShiftImmediate       =  -4, { IMM3 - SHLQ RD RA 12 }
+    iocShiftRegister        =  -3, { RGTR - SHLR RD RA RB }
     iocNegation             =  -2, { RGTR - NEGR RD RA    }
     iocDyadicFunction       =  -1, { RGTR - DYAD RD RA RB }
     iocAddRegister          =   0, { RGTR - ADDR RD RA RB }
@@ -73,8 +73,8 @@ const
   CInstructionMnemonics: array[TInstructionOpcode] of String = (
     'UD13', 'UD12', 'UD11',
     'UD10', 'UD09', 'UD08',
-    'UD07', 'UD06', 'ROTR',
-    'LSHI', 'LSHR', 'NEGR',
+    'UD07', 'UD06', 'ROLR',
+    'SHLQ', 'SHLR', 'NEGR',
     'DYAD', 'ADDR', 'ADDQ',
     'ADDH', 'LDLH', 'LDHH',
     'LDMR', 'STMR', 'BREQ',

@@ -40,9 +40,9 @@ MULTIPLY   PUSH S2 U4
            ADDQ U10 PC 'LOOPSTART             BRANCH TARGET 2
            ADDQ U11 PC 'LOOPNEXT              BRANCH TARGET 3
 LOOPSTART  NEGR U6 U4                         GET THE NTH BIT OF OPERAND B
-           LSHR U6 U2 U6
-           LSHI U6 U6 11
-           LSHI U6 U6 -11
+           SHLR U6 U2 U6
+           SHLQ U6 U6 11
+           SHLQ U6 U6 -11
            BREQ U11 U6 ZERO
            BRLT U9 U6 ZERO
 EXPPLUS    ADDR U6 U8 ZERO                    EXPAND THE RIGHTMOST TRIT AS PLUS
@@ -50,7 +50,7 @@ EXPPLUS    ADDR U6 U8 ZERO                    EXPAND THE RIGHTMOST TRIT AS PLUS
 EXPMINUS   NEGR U6 U8                         EXPAND THE RIGHTMOST TRIT AS MINUS
 SHIFTADD   ADDR U7 U5 ZERO                    LOAD TRUTH TABLE
            DYAD U7 U1 U6                      MULTIPLY OPERAND A WITH EXPANDED
-           LSHR U7 U7 U4                      SHIFT LEFT BY COUNTER VALUE
+           SHLR U7 U7 U4                      SHIFT LEFT BY COUNTER VALUE
            ADDR U3 U3 U7                      ADD TO RESULT
 LOOPNEXT   ADDH U4 -1                         STEP THE COUNTER
            BRLE U10 ZERO U4                   BRANCH TO LOOPSTART
