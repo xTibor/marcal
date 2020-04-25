@@ -18,7 +18,8 @@ const
 type
   TAssemblerFunction = (
     afNone,
-    afPcRelative,
+    afPcRelative1,
+    afPcRelative2,
     afLowHalf,
     afHighHalf
   );
@@ -140,7 +141,8 @@ begin
       for GIndex := Low(GStrParts) to High(GStrParts) do begin
         { Read function markers }
         case GStrParts[GIndex][1] of
-          '''': GFunction := afPcRelative;
+          '''': GFunction := afPcRelative1;
+          '"':  GFunction := afPcRelative2;
           '>':  GFunction := afHighHalf;
           '<':  GFunction := afLowHalf;
           else  GFunction := afNone;
@@ -163,8 +165,11 @@ begin
 
         { Apply function }
         case GFunction of
-          afPcRelative: begin
+          afPcRelative1: begin
             GWordParts[GIndex] := GWordParts[GIndex] - (GProgramCounter + 1);
+          end;
+          afPcRelative2: begin
+            GWordParts[GIndex] := GWordParts[GIndex] - (GProgramCounter + 2);
           end;
           afHighHalf: begin
             GHalfWords := WordToHalfWords(GWordParts[GIndex]);
