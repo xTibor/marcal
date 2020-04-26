@@ -7,7 +7,8 @@ EXAMPLES := \
 	build/Example02.t \
 	build/Example03.t \
 	build/Multiply.t  \
-	build/Jumps.t
+	build/Jumps.t \
+	build/Data.t
 
 run: $(TOOLS) $(EXAMPLES)
 	build/Emulator build/Multiply.t

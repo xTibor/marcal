@@ -59,28 +59,72 @@ begin
   AInstruction := Trim(ChompLeft(ALine, CInstructionWidth));
 end;
 
+{ TODO: Move these to their place of use when FPC finally implements
+        inline variable declarations from Delphi 10.3. }
 var
   GOutputFile: TextFile;
-
   GLines: TStringArray;
   GLineIndex: Integer;
-
   GProgramCounter: TWord;
   GSymbolTable: TSymbolTable;
-
   GStrLabel: String;
   GStrInstruction: String;
-
-  GFunction: TAssemblerFunction;
-  GHalfWords: THalfWordArray;
   GStrParts: TStringArray;
   GWordParts: array of TWord;
-  GInteger: LongInt;
   GInstruction: TWord;
-
   GIndex: Integer;
   GRegisterIndex: TRegister;
   GOpcodeIndex: TInstructionOpcode;
+
+function ParseValue(AString: String): TWord;
+var
+  LFunction: TAssemblerFunction;
+  LInteger: LongInt;
+  LHalfWords: THalfWordArray;
+begin
+  { Read function markers }
+  case AString[1] of
+    '''': LFunction := afPcRelative1;
+    '"':  LFunction := afPcRelative2;
+    '>':  LFunction := afHighHalf;
+    '<':  LFunction := afLowHalf;
+    else  LFunction := afNone;
+  end;
+
+  if LFunction <> afNone then
+    Delete(AString, 1, 1);
+
+  if TryStrToInt(AString, LInteger) then begin
+    { Is it a number? }
+    ParseValue := TWord(LInteger);
+  end else if GSymbolTable.IndexOf(AString) <> -1 then begin
+    { Is it a known symbol? }
+    ParseValue := GSymbolTable[AString];
+  end else begin
+    { Unknown }
+    WriteLn(Format('Syntax error at line %d: %s', [GLineIndex + 1, AString]));
+    Halt(1);
+  end;
+
+  { Apply function }
+  case LFunction of
+    afPcRelative1: begin
+      ParseValue := ParseValue - (GProgramCounter + 1);
+    end;
+    afPcRelative2: begin
+      ParseValue := ParseValue - (GProgramCounter + 2);
+    end;
+    afHighHalf: begin
+      LHalfWords := WordToHalfWords(ParseValue);
+      ParseValue := LHalfWords[1];
+    end;
+    afLowHalf: begin
+      LHalfWords := WordToHalfWords(ParseValue);
+      ParseValue := LHalfWords[0];
+    end;
+  end;
+end;
+
 begin
   if ParamCount() <> 2 then begin
     WriteLn('Usage: Assembler input.s output.t');
@@ -137,73 +181,39 @@ begin
       if Length(GStrParts) > 4 then
         SetLength(GStrParts, 4);
 
-      SetLength(GWordParts, Length(GStrParts));
-      for GIndex := Low(GStrParts) to High(GStrParts) do begin
-        { Read function markers }
-        case GStrParts[GIndex][1] of
-          '''': GFunction := afPcRelative1;
-          '"':  GFunction := afPcRelative2;
-          '>':  GFunction := afHighHalf;
-          '<':  GFunction := afLowHalf;
-          else  GFunction := afNone;
+      if GStrParts[0] = 'DATA' then begin
+        { Data definition instruction }
+        GInstruction := ParseValue(GStrParts[1]);
+      end else begin
+        { Regular instructions }
+        SetLength(GWordParts, Length(GStrParts));
+
+        for GIndex := Low(GStrParts) to High(GStrParts) do
+          GWordParts[GIndex] := ParseValue(GStrParts[GIndex]);
+
+        { Implicit zero arguments }
+        SetLength(GWordParts, 4);
+
+        { Emit the instruction }
+        case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
+          ifRegister:
+            GInstruction := EncodeInstructionRgtr(
+              TInstructionOpcode(GWordParts[0]),
+              TRegister(GWordParts[1]),
+              TRegister(GWordParts[2]),
+              TRegister(GWordParts[3]));
+          ifImmediate3:
+            GInstruction := EncodeInstructionImm3(
+              TInstructionOpcode(GWordParts[0]),
+              TRegister(GWordParts[1]),
+              TRegister(GWordParts[2]),
+              TQuarterWord(GWordParts[3]));
+          ifImmediate6:
+            GInstruction := EncodeInstructionImm6(
+              TInstructionOpcode(GWordParts[0]),
+              TRegister(GWordParts[1]),
+              THalfWord(GWordParts[2]));
         end;
-
-        if GFunction <> afNone then
-          Delete(GStrParts[GIndex], 1, 1);
-
-        if TryStrToInt(GStrParts[GIndex], GInteger) then begin
-          { Is it a number? }
-          GWordParts[GIndex] := TWord(GInteger);
-        end else if GSymbolTable.IndexOf(GStrParts[GIndex]) <> -1 then begin
-          { Is it a known symbol? }
-          GWordParts[GIndex] := GSymbolTable[GStrParts[GIndex]];
-        end else begin
-          { Unknown }
-          WriteLn(Format('Syntax error at line %d: %s', [GLineIndex + 1, GStrParts[GIndex]]));
-          Halt(1);
-        end;
-
-        { Apply function }
-        case GFunction of
-          afPcRelative1: begin
-            GWordParts[GIndex] := GWordParts[GIndex] - (GProgramCounter + 1);
-          end;
-          afPcRelative2: begin
-            GWordParts[GIndex] := GWordParts[GIndex] - (GProgramCounter + 2);
-          end;
-          afHighHalf: begin
-            GHalfWords := WordToHalfWords(GWordParts[GIndex]);
-            GWordParts[GIndex] := GHalfWords[1];
-          end;
-          afLowHalf: begin
-            GHalfWords := WordToHalfWords(GWordParts[GIndex]);
-            GWordParts[GIndex] := GHalfWords[0];
-          end;
-        end;
-      end;
-
-      { Implicit zero arguments }
-      SetLength(GWordParts, 4);
-
-      { Emit the instruction }
-      case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
-        ifRegister:
-          GInstruction := EncodeInstructionRgtr(
-            TInstructionOpcode(GWordParts[0]),
-            TRegister(GWordParts[1]),
-            TRegister(GWordParts[2]),
-            TRegister(GWordParts[3]));
-        ifImmediate3:
-          GInstruction := EncodeInstructionImm3(
-            TInstructionOpcode(GWordParts[0]),
-            TRegister(GWordParts[1]),
-            TRegister(GWordParts[2]),
-            TQuarterWord(GWordParts[3]));
-        ifImmediate6:
-          GInstruction := EncodeInstructionImm6(
-            TInstructionOpcode(GWordParts[0]),
-            TRegister(GWordParts[1]),
-            THalfWord(GWordParts[2]));
       end;
 
       WriteLn(GOutputFile, GProgramCounter, ' ', GInstruction);
