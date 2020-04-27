@@ -24,32 +24,6 @@ type
     afHighHalf
   );
 
-function EncodeInstructionRgtr(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; ARegB: TRegister): TWord;
-begin
-  EncodeInstructionRgtr :=
-    (LongInt(AOpcode) * 19683) + { << 9 }
-    (LongInt(ARegD)   *   729) + { << 6 }
-    (LongInt(ARegA)   *    27) + { << 3 }
-    (LongInt(ARegB)   *     1);  { << 0 }
-end;
-
-function EncodeInstructionImm3(AOpcode: TInstructionOpcode; ARegD: TRegister; ARegA: TRegister; AImmediate: TQuarterWord): TWord;
-begin
-  EncodeInstructionImm3 :=
-    (LongInt(AOpcode)    * 19683) + { << 9 }
-    (LongInt(ARegD)      *   729) + { << 6 }
-    (LongInt(ARegA)      *    27) + { << 3 }
-    (LongInt(AImmediate) *     1);  { << 0 }
-end;
-
-function EncodeInstructionImm6(AOpcode: TInstructionOpcode; ARegD: TRegister; AImmediate: THalfWord): TWord;
-begin
-  EncodeInstructionImm6 :=
-    (LongInt(AOpcode)    * 19683) + { << 9 }
-    (LongInt(ARegD)      *   729) + { << 6 }
-    (LongInt(AImmediate) *     1);  { << 0 }
-end;
-
 procedure SplitLine(ALine: String; var ALabel: String; var AInstruction: String);
 begin
   ALine := PadRight(ALine, CLineWidth);
@@ -59,22 +33,10 @@ begin
   AInstruction := Trim(ChompLeft(ALine, CInstructionWidth));
 end;
 
-{ TODO: Move these to their place of use when FPC finally implements
-        inline variable declarations from Delphi 10.3. }
 var
-  GOutputFile: TextFile;
-  GLines: TStringArray;
-  GLineIndex: Integer;
-  GProgramCounter: TWord;
   GSymbolTable: TSymbolTable;
-  GStrLabel: String;
-  GStrInstruction: String;
-  GStrParts: TStringArray;
-  GWordParts: array of TWord;
-  GInstruction: TWord;
-  GIndex: Integer;
-  GRegisterIndex: TRegister;
-  GOpcodeIndex: TInstructionOpcode;
+  GProgramCounter: TWord;
+  GLineIndex: Integer;
 
 function ParseValue(AString: String): TWord;
 var
@@ -125,6 +87,17 @@ begin
   end;
 end;
 
+var
+  GOutputFile: TextFile;
+  GLines: TStringArray;
+  GStrLabel: String;
+  GStrInstruction: String;
+  GStrParts: TStringArray;
+  GWordParts: array of TWord;
+  GOutputValue: TWord;
+  GIndex: Integer;
+  GRegisterIndex: TRegister;
+  GOpcodeIndex: TInstructionOpcode;
 begin
   if ParamCount() <> 2 then begin
     WriteLn('Usage: Assembler input.s output.t');
@@ -182,8 +155,8 @@ begin
         SetLength(GStrParts, 4);
 
       if GStrParts[0] = 'DATA' then begin
-        { Data definition instruction }
-        GInstruction := ParseValue(GStrParts[1]);
+        { Data definition }
+        GOutputValue := ParseValue(GStrParts[1]);
       end else begin
         { Regular instructions }
         SetLength(GWordParts, Length(GStrParts));
@@ -197,26 +170,26 @@ begin
         { Emit the instruction }
         case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
           ifRegister:
-            GInstruction := EncodeInstructionRgtr(
-              TInstructionOpcode(GWordParts[0]),
-              TRegister(GWordParts[1]),
-              TRegister(GWordParts[2]),
-              TRegister(GWordParts[3]));
+            GOutputValue := 
+              (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
+              (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
+              (LongInt(         TRegister(GWordParts[2])) *    27) + { << 3 }
+              (LongInt(         TRegister(GWordParts[3])) *     1);  { << 0 }
           ifImmediate3:
-            GInstruction := EncodeInstructionImm3(
-              TInstructionOpcode(GWordParts[0]),
-              TRegister(GWordParts[1]),
-              TRegister(GWordParts[2]),
-              TQuarterWord(GWordParts[3]));
+            GOutputValue := 
+              (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
+              (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
+              (LongInt(         TRegister(GWordParts[2])) *    27) + { << 3 }
+              (LongInt(      TQuarterWord(GWordParts[3])) *     1);  { << 0 }
           ifImmediate6:
-            GInstruction := EncodeInstructionImm6(
-              TInstructionOpcode(GWordParts[0]),
-              TRegister(GWordParts[1]),
-              THalfWord(GWordParts[2]));
+            GOutputValue := 
+              (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
+              (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
+              (LongInt(         THalfWord(GWordParts[2])) *     1);  { << 0 }
         end;
       end;
 
-      WriteLn(GOutputFile, GProgramCounter, ' ', GInstruction);
+      WriteLn(GOutputFile, GProgramCounter, ' ', GOutputValue);
       GProgramCounter += 1;
     end;
   end;
