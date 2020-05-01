@@ -42,9 +42,51 @@ Ternary Integer Types
 Memory
 ======
 
-TODO: Address space 12 trits
-TODO: 729 pages, 729 words per page
-Zero-page mapped as ROM,
+The architecture has a 12-trit address space, divided into 729 pages. Each of
+these pages hold 729 words of data. The only addressable data unit is the
+12-trit machine word.
+
+Pages are indexed from Page -364 to Page 364, the words inside these pages are
+also indexed from -364 to 364. When memory addresses are separated into two
+half-words, the higher half-word corresponds to the page index, the lower one
+corresponds to word offset inside the page.
+
+There are two pages with fixed purpose:
+
++---------+-----------------------+--------------------------------------------+
+|         | Memory address        |                                            |
+|         +-------+-------+-------+ Description                                |
+|         | Low   | Mid   | High  |                                            |
++=========+=======+=======+=======+============================================+
+| Page 0  |  -364 |     0 |   364 | The program counter is initialized to 0    |
+|         |       |       |       | on startup, therefore this page contains   |
+|         |       |       |       | the initialization code of the system.     |
++---------+-------+-------+-------+--------------------------------------------+
+| Page -1 | -1094 |  -729 |  -365 | See: `Memory mapping information page`_    |
+|         |       |       |       | subsection                                 |
++---------+-------+-------+-------+--------------------------------------------+
+
+Memory mapping information page
+-------------------------------
+
+Page -1 contains the memory mapping of the system. Each word inside this page
+holds the mapping entry of pages with the same offset. The MMIP itself is mapped
+as read-only.
+
+MMIP is used by the system software to discover available RAM pages and
+memory mapped I/O devices.
+
++-----+--------------------+---------------------------------------------------+
+| No. | Mapping type       | Description                                       |
++=====+====================+===================================================+
+|   0 | Unmapped           |                                                   |
++-----+--------------------+---------------------------------------------------+
+|   1 | ROM                |                                                   |
++-----+--------------------+---------------------------------------------------+
+|   2 | RAM                |                                                   |
++-----+--------------------+---------------------------------------------------+
+|   3 | Serial I/O device  | Terminals, network devices, etc.                  |
++-----+--------------------+---------------------------------------------------+
 
 Registers
 =========
