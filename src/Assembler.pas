@@ -44,6 +44,11 @@ var
   LInteger: LongInt;
   LHalfWords: THalfWordArray;
 begin
+  if AString = '' then begin
+    ParseValue := 0;
+    Exit;
+  end;
+
   { Read function markers }
   case AString[1] of
     '''': LFunction := afPcRelative1;
@@ -134,8 +139,17 @@ begin
       GSymbolTable.Add(GStrLabel, GProgramCounter);
     end;
 
-    if GStrInstruction <> '' then
-      GProgramCounter += 1;
+    if GStrInstruction <> '' then begin
+      { Four parts per instruction }
+      GStrParts := Split(GStrInstruction);
+      SetLength(GStrParts, 4);
+
+      if GStrParts[0] = 'OFFSET' then begin
+        GProgramCounter := ParseValue(GStrParts[1]);
+      end else begin
+        GProgramCounter += 1;
+      end;
+    end;
   end;
 
   { Second pass: Assemble instructions }
@@ -148,15 +162,19 @@ begin
     SplitLine(GLines[GLineIndex], GStrLabel, GStrInstruction);
 
     if GStrInstruction <> '' then begin
+      { Four parts per instruction }
       GStrParts := Split(GStrInstruction);
+      SetLength(GStrParts, 4);
 
-      { Limit 4 parts per instruction }
-      if Length(GStrParts) > 4 then
-        SetLength(GStrParts, 4);
-
-      if GStrParts[0] = 'DATA' then begin
+      if GStrParts[0] = 'OFFSET' then begin
+        GProgramCounter := ParseValue(GStrParts[1]);
+      end else if GStrParts[0] = 'DATA' then begin
         { Data definition }
         GOutputValue := ParseValue(GStrParts[1]);
+
+        { Emit the instruction }
+        WriteLn(GOutputFile, GProgramCounter, ' ', GOutputValue);
+        GProgramCounter += 1;
       end else begin
         { Regular instructions }
         SetLength(GWordParts, Length(GStrParts));
@@ -164,33 +182,31 @@ begin
         for GIndex := Low(GStrParts) to High(GStrParts) do
           GWordParts[GIndex] := ParseValue(GStrParts[GIndex]);
 
-        { Implicit zero arguments }
-        SetLength(GWordParts, 4);
-
-        { Emit the instruction }
+        { Encode the instruction }
         case CInstructionFormats[TInstructionOpcode(GWordParts[0])] of
           ifRegister:
-            GOutputValue := 
+            GOutputValue :=
               (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
               (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
               (LongInt(         TRegister(GWordParts[2])) *    27) + { << 3 }
               (LongInt(         TRegister(GWordParts[3])) *     1);  { << 0 }
           ifImmediate3:
-            GOutputValue := 
+            GOutputValue :=
               (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
               (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
               (LongInt(         TRegister(GWordParts[2])) *    27) + { << 3 }
               (LongInt(      TQuarterWord(GWordParts[3])) *     1);  { << 0 }
           ifImmediate6:
-            GOutputValue := 
+            GOutputValue :=
               (LongInt(TInstructionOpcode(GWordParts[0])) * 19683) + { << 9 }
               (LongInt(         TRegister(GWordParts[1])) *   729) + { << 6 }
               (LongInt(         THalfWord(GWordParts[2])) *     1);  { << 0 }
         end;
-      end;
 
-      WriteLn(GOutputFile, GProgramCounter, ' ', GOutputValue);
-      GProgramCounter += 1;
+        { Emit the instruction }
+        WriteLn(GOutputFile, GProgramCounter, ' ', GOutputValue);
+        GProgramCounter += 1;
+      end;
     end;
   end;
 
