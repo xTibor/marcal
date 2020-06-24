@@ -109,14 +109,28 @@ System Registers
 |   1 | S1 / PC   | Program counter holding the    |
 |     |           | next instruction's address.    |
 +-----+-----------+--------------------------------+
-|   2 | S2        | Registers S2-S13 are reserved  |
-+-----+-----------+ for system software use.       |
-|   3 | S3        |                                |
-+-----+-----------+                                |
-|   4 | S4        |                                |
-+-----+-----------+                                |
-|   5 | S5        |                                |
-+-----+-----------+                                |
+|   2 | S2 / IHA  | Interrupt handler address.     |
++-----+-----------+--------------------------------+
+|   3 | S3 / IRA  | Interrupt return address.      |
+|     |           |                                |
+|     |           | Volatile.                      |
+|     |           | Must only be set by:           |
+|     |           |                                |
+|     |           | - SWIR / RETI,                 |
+|     |           | - interrupt handler            |
+|     |           |   (for implementing preemptive |
+|     |           |   multitasking).               |
++-----+-----------+--------------------------------+
+|   4 | S4 / INUM | Interrupt number.              |
+|     |           |                                |
+|     |           | Volatile.                      |
+|     |           | Must only be set by:           |
+|     |           |                                |
+|     |           | - SWIR / RETI,                 |
+|     |           | - interrupt handler.           |
++-----+-----------+--------------------------------+
+|   5 | S5        | Registers S5-S13 are reserved  |
++-----+-----------+ for system use.                |
 |   6 | S6        |                                |
 +-----+-----------+                                |
 |   7 | S7        |                                |
@@ -195,7 +209,8 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 | Op. | Format | Instruction       | Description                               |
 +=====+========+===================+===========================================+
-| -13 |        |                   | Undefined instruction.                    |
+| -13 |        |                   | Reserved for extended instruction         |
+|     |        |                   | encodings.                                |
 +-----+--------+-------------------+-------------------------------------------+
 | -12 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
@@ -207,25 +222,39 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 |  -8 |        |                   | Undefined instruction.                    |
 +-----+--------+-------------------+-------------------------------------------+
-|  -7 |        |                   | Undefined instruction.                    |
+|  -7 | RGTR   | SWIR ZERO RA      | Raise a software interrupt.               |
+|     |        |                   |                                           |
+|     |        |                   || IRA := PC (TODO: +-1 Offset?)            |
+|     |        |                   || ISF := 1                                 |
+|     |        |                   || PC := IRH                                |
+|     |        |                   |                                           |
+|     |        |                   | See: `Interrupts`_ subsection             |
 +-----+--------+-------------------+-------------------------------------------+
-|  -6 |        |                   | Undefined instruction.                    |
+|  -6 | RGTR   | RETI              | Return from interrupt.                    |
+|     |        |                   |                                           |
+|     |        |                   | Moves IRA to PC and clears the interrupt  |
+|     |        |                   | status flag.                              |
+|     |        |                   |                                           |
+|     |        |                   || PC := IRA                                |
+|     |        |                   || ISF := 0                                 |
+|     |        |                   |                                           |
+|     |        |                   | See: `Interrupts`_ subsection             |
 +-----+--------+-------------------+-------------------------------------------+
 |  -5 | RGTR   | ROLR RD RA RB     | Rotate register left.                     |
 |     |        |                   |                                           |
-|     |        |                   | RD := RA <rot< RB                         |
+|     |        |                   || RD := RA <rot< RB                        |
 +-----+--------+-------------------+-------------------------------------------+
 |  -4 | IMM3   | SHLQ RD RA 12     | Shift register left with immediate.       |
 |     |        |                   |                                           |
-|     |        |                   | RD := RA << Imm                           |
+|     |        |                   || RD := RA << Imm                          |
 +-----+--------+-------------------+-------------------------------------------+
 |  -3 | RGTR   | SHLR RD RA RB     | Shift register left with register.        |
 |     |        |                   |                                           |
-|     |        |                   | RD := RA << RB                            |
+|     |        |                   || RD := RA << RB                           |
 +-----+--------+-------------------+-------------------------------------------+
 |  -2 | RGTR   | NEGR RD RA        | Negation.                                 |
 |     |        |                   |                                           |
-|     |        |                   | RD := -RA                                 |
+|     |        |                   || RD := -RA                                |
 +-----+--------+-------------------+-------------------------------------------+
 |  -1 | RGTR   | DYAD RD RA RB     | Dyadic function.                          |
 |     |        |                   |                                           |
@@ -233,35 +262,35 @@ Base Instruction Set
 +-----+--------+-------------------+-------------------------------------------+
 |   0 | RGTR   | ADDR RD RA RB     | Add register to register.                 |
 |     |        |                   |                                           |
-|     |        |                   | RD := RA + RB                             |
+|     |        |                   || RD := RA + RB                            |
 +-----+--------+-------------------+-------------------------------------------+
 |   1 | IMM3   | ADDQ RD RA 12     | Add quarter-word to register.             |
 |     |        |                   |                                           |
-|     |        |                   | RD := RA + Imm                            |
+|     |        |                   || RD := RA + Imm                           |
 +-----+--------+-------------------+-------------------------------------------+
 |   2 | IMM6   | ADDH RD 123       | Add half-word to register.                |
 |     |        |                   |                                           |
-|     |        |                   | RD := RD + Imm                            |
+|     |        |                   || RD := RD + Imm                           |
 +-----+--------+-------------------+-------------------------------------------+
 |   3 | IMM6   | LDLH RD 123       | Load half-word to the lower half of       |
 |     |        |                   | register RD, clear the higher half with   |
 |     |        |                   | zeroes.                                   |
 |     |        |                   |                                           |
-|     |        |                   | RD := Imm                                 |
+|     |        |                   || RD := Imm                                |
 +-----+--------+-------------------+-------------------------------------------+
 |   4 | IMM6   | LDHH RD 123       | Load half-word to higher half of          |
 |     |        |                   | register RD, clear the lower half with    |
 |     |        |                   | zeroes.                                   |
 |     |        |                   |                                           |
-|     |        |                   | RD := Imm << 6                            |
+|     |        |                   || RD := Imm << 6                           |
 +-----+--------+-------------------+-------------------------------------------+
 |   5 | RGTR   | LDMR RD RA RB     | Load memory to register.                  |
 |     |        |                   |                                           |
-|     |        |                   | RD := Memory[RA + RB]                     |
+|     |        |                   || RD := Memory[RA + RB]                    |
 +-----+--------+-------------------+-------------------------------------------+
 |   6 | RGTR   | STMR RD RA RB     | Store register to memory.                 |
 |     |        |                   |                                           |
-|     |        |                   | Memory[RA + RB] := RD                     |
+|     |        |                   || Memory[RA + RB] := RD                    |
 +-----+--------+-------------------+-------------------------------------------+
 |   7 | RGTR   | BREQ RD RA RB     | Branch to RD when RA = RB                 |
 +-----+--------+-------------------+-------------------------------------------+
@@ -482,3 +511,19 @@ Shift/Rotate:
 
 TODO:
   Integer overflow -> undefined
+
+
+Interrupts
+==========
+
+TODO: IHA initialized to 0
+TODO: System starts with the Reset interrupt (Number 0)
+TODO: Enters user code on reset by setting IRA and calling RETI
+
+TODO: Interrupt status flag (0/1)
+TODO: What happens when SWIR called inside an interrupt handler (fail)
+TODO: What happens when RETI called outside an interrupt handler (fail)
+
+TODO: Explain IRA/INUM volatility (hardware interrupts could clobber them any time)
+
+TODO: Explain how IRA/INUM set/cleared on SWIR/RETI
