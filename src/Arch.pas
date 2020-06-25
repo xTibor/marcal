@@ -16,8 +16,8 @@ type
     iocUndefined10          = -10, { <??> - Undefined     }
     iocUndefined9           =  -9, { <??> - Undefined     }
     iocUndefined8           =  -8, { <??> - Undefined     }
-    iocUndefined7           =  -7, { <??> - Undefined     }
-    iocUndefined6           =  -6, { <??> - Undefined     }
+    iocSoftwareInterrupt    =  -7, { RGTR - SWIR RD       }
+    iocReturnInterrupt      =  -6, { RGTR - RETI          }
     iocRotate               =  -5, { RGTR - ROLR RD RA RB }
     iocShiftImmediate       =  -4, { IMM3 - SHLQ RD RA 12 }
     iocShiftRegister        =  -3, { RGTR - SHLR RD RA RB }
@@ -40,40 +40,40 @@ type
   );
 
   TRegister = (
-    regUser13         = -13,
-    regUser12         = -12,
-    regUser11         = -11,
-    regUser10         = -10,
-    regUser9          =  -9,
-    regUser8          =  -8,
-    regUser7          =  -7,
-    regUser6          =  -6,
-    regUser5          =  -5,
-    regUser4          =  -4,
-    regUser3          =  -3,
-    regUser2          =  -2,
-    regUser1          =  -1,
-    regZero           =   0,
-    regProgramCounter =   1,
-    regSystem2        =   2,
-    regSystem3        =   3,
-    regSystem4        =   4,
-    regSystem5        =   5,
-    regSystem6        =   6,
-    regSystem7        =   7,
-    regSystem8        =   8,
-    regSystem9        =   9,
-    regSystem10       =  10,
-    regSystem11       =  11,
-    regSystem12       =  12,
-    regSystem13       =  13
+    regUser13           = -13,
+    regUser12           = -12,
+    regUser11           = -11,
+    regUser10           = -10,
+    regUser9            =  -9,
+    regUser8            =  -8,
+    regUser7            =  -7,
+    regUser6            =  -6,
+    regUser5            =  -5,
+    regUser4            =  -4,
+    regUser3            =  -3,
+    regUser2            =  -2,
+    regUser1            =  -1,
+    regZero             =   0,
+    regProgramCounter   =   1,
+    regInterruptHandler =   2,
+    regInterruptReturn  =   3,
+    regInterruptNumber  =   4,
+    regSystem5          =   5,
+    regSystem6          =   6,
+    regSystem7          =   7,
+    regSystem8          =   8,
+    regSystem9          =   9,
+    regSystem10         =  10,
+    regSystem11         =  11,
+    regSystem12         =  12,
+    regSystem13         =  13
   );
 
 const
   CInstructionMnemonics: array[TInstructionOpcode] of String = (
     'UD13', 'UD12', 'UD11',
     'UD10', 'UD09', 'UD08',
-    'UD07', 'UD06', 'ROLR',
+    'SWIR', 'RETI', 'ROLR',
     'SHLQ', 'SHLR', 'NEGR',
     'DYAD', 'ADDR', 'ADDQ',
     'ADDH', 'LDLH', 'LDHH',
@@ -111,9 +111,9 @@ const
     ('U1',   '',    ''  ),
     ('ZERO', 'U0',  'S0'),
     ('PC',   'S1',  ''  ),
-    ('S2',   '',    ''  ),
-    ('S3',   '',    ''  ),
-    ('S4',   '',    ''  ),
+    ('IHA',  'S2',  ''  ),
+    ('IRA',  'S3',  ''  ),
+    ('INUM', 'S4',  ''  ),
     ('S5',   '',    ''  ),
     ('S6',   '',    ''  ),
     ('S7',   '',    ''  ),

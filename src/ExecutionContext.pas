@@ -9,6 +9,7 @@ type
   TExecutionContext = record
     Registers: array[TRegister] of TWord;
     Memory: array[TWord] of TWord;
+    InterruptFlag: Boolean;
     Halt: Boolean;
   end;
 
@@ -29,6 +30,7 @@ begin
   for LIndex := Low(AContext.Memory) to High(AContext.Memory) do
     AContext.Memory[LIndex] := 0;
 
+  AContext.InterruptFlag := true;
   AContext.Halt := false;
 end;
 
@@ -84,6 +86,26 @@ begin
         { Will be handled by some memory-mapped I/O controller in the future }
         WriteLn('Output: ', Registers[LRegD]);
         WriteLn();
+      end;
+      iocSoftwareInterrupt: begin
+        if not InterruptFlag then begin
+          InterruptFlag := true;
+          Registers[regInterruptReturn] := Registers[regProgramCounter];
+          Registers[regInterruptNumber] := Registers[LRegD];
+          Registers[regProgramCounter] := Registers[regInterruptHandler];
+        end else begin
+          WriteLn('Nested interrupts');
+          Halt := true;
+        end;
+      end;
+      iocReturnInterrupt: begin
+        if InterruptFlag then begin
+          InterruptFlag := false;
+          Registers[regProgramCounter] := Registers[regInterruptReturn];
+        end else begin
+          WriteLn('RETI outside of an interrupt handler');
+          Halt := true;
+        end;
       end;
       iocRotate: begin
         if LRegD <> regZero then

@@ -8,10 +8,11 @@ EXAMPLES := \
 	build/Example03.t \
 	build/Multiply.t  \
 	build/Jumps.t \
-	build/Data.t
+	build/Data.t \
+	build/System.t
 
 run: $(TOOLS) $(EXAMPLES)
-	build/Emulator build/Multiply.t
+	build/Emulator build/System.t
 
 asm: $(TOOLS) $(EXAMPLES)
 
