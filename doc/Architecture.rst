@@ -62,7 +62,7 @@ There are two pages with fixed purpose:
 |         |       |       |       | on startup, therefore this page contains   |
 |         |       |       |       | the initialization code of the system.     |
 +---------+-------+-------+-------+--------------------------------------------+
-| Page -1 | -1094 |  -729 |  -365 | See: `Memory mapping information page`_    |
+| Page -1 | -1093 |  -729 |  -365 | See: `Memory mapping information page`_    |
 |         |       |       |       | subsection                                 |
 +---------+-------+-------+-------+--------------------------------------------+
 
