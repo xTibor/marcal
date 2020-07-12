@@ -1,734 +1,90 @@
-           OFFSET -1094                       MEMORY MAPPING INFORMATION PAGE
-MMIPLOW    DATA 0                             PAGE -364
-           DATA 0                             PAGE -363
-           DATA 0                             PAGE -363
-           DATA 0                             PAGE -362
-           DATA 0                             PAGE -361
-           DATA 0                             PAGE -360
-           DATA 0                             PAGE -359
-           DATA 0                             PAGE -358
-           DATA 0                             PAGE -357
-           DATA 0                             PAGE -356
-           DATA 0                             PAGE -355
-           DATA 0                             PAGE -354
-           DATA 0                             PAGE -353
-           DATA 0                             PAGE -352
-           DATA 0                             PAGE -351
-           DATA 0                             PAGE -350
-           DATA 0                             PAGE -349
-           DATA 0                             PAGE -348
-           DATA 0                             PAGE -347
-           DATA 0                             PAGE -346
-           DATA 0                             PAGE -345
-           DATA 0                             PAGE -344
-           DATA 0                             PAGE -343
-           DATA 0                             PAGE -342
-           DATA 0                             PAGE -341
-           DATA 0                             PAGE -340
-           DATA 0                             PAGE -339
-           DATA 0                             PAGE -338
-           DATA 0                             PAGE -337
-           DATA 0                             PAGE -336
-           DATA 0                             PAGE -335
-           DATA 0                             PAGE -334
-           DATA 0                             PAGE -333
-           DATA 0                             PAGE -332
-           DATA 0                             PAGE -331
-           DATA 0                             PAGE -330
-           DATA 0                             PAGE -329
-           DATA 0                             PAGE -328
-           DATA 0                             PAGE -327
-           DATA 0                             PAGE -326
-           DATA 0                             PAGE -325
-           DATA 0                             PAGE -324
-           DATA 0                             PAGE -323
-           DATA 0                             PAGE -322
-           DATA 0                             PAGE -321
-           DATA 0                             PAGE -320
-           DATA 0                             PAGE -319
-           DATA 0                             PAGE -318
-           DATA 0                             PAGE -317
-           DATA 0                             PAGE -316
-           DATA 0                             PAGE -315
-           DATA 0                             PAGE -314
-           DATA 0                             PAGE -313
-           DATA 0                             PAGE -312
-           DATA 0                             PAGE -311
-           DATA 0                             PAGE -310
-           DATA 0                             PAGE -309
-           DATA 0                             PAGE -308
-           DATA 0                             PAGE -307
-           DATA 0                             PAGE -306
-           DATA 0                             PAGE -305
-           DATA 0                             PAGE -304
-           DATA 0                             PAGE -303
-           DATA 0                             PAGE -302
-           DATA 0                             PAGE -301
-           DATA 0                             PAGE -300
-           DATA 0                             PAGE -299
-           DATA 0                             PAGE -298
-           DATA 0                             PAGE -297
-           DATA 0                             PAGE -296
-           DATA 0                             PAGE -295
-           DATA 0                             PAGE -294
-           DATA 0                             PAGE -293
-           DATA 0                             PAGE -292
-           DATA 0                             PAGE -291
-           DATA 0                             PAGE -290
-           DATA 0                             PAGE -289
-           DATA 0                             PAGE -288
-           DATA 0                             PAGE -287
-           DATA 0                             PAGE -286
-           DATA 0                             PAGE -285
-           DATA 0                             PAGE -284
-           DATA 0                             PAGE -283
-           DATA 0                             PAGE -282
-           DATA 0                             PAGE -281
-           DATA 0                             PAGE -280
-           DATA 0                             PAGE -279
-           DATA 0                             PAGE -278
-           DATA 0                             PAGE -277
-           DATA 0                             PAGE -276
-           DATA 0                             PAGE -275
-           DATA 0                             PAGE -274
-           DATA 0                             PAGE -273
-           DATA 0                             PAGE -272
-           DATA 0                             PAGE -271
-           DATA 0                             PAGE -270
-           DATA 0                             PAGE -269
-           DATA 0                             PAGE -268
-           DATA 0                             PAGE -267
-           DATA 0                             PAGE -266
-           DATA 0                             PAGE -265
-           DATA 0                             PAGE -264
-           DATA 0                             PAGE -263
-           DATA 0                             PAGE -262
-           DATA 0                             PAGE -261
-           DATA 0                             PAGE -260
-           DATA 0                             PAGE -259
-           DATA 0                             PAGE -258
-           DATA 0                             PAGE -257
-           DATA 0                             PAGE -256
-           DATA 0                             PAGE -255
-           DATA 0                             PAGE -254
-           DATA 0                             PAGE -253
-           DATA 0                             PAGE -252
-           DATA 0                             PAGE -251
-           DATA 0                             PAGE -250
-           DATA 0                             PAGE -249
-           DATA 0                             PAGE -248
-           DATA 0                             PAGE -247
-           DATA 0                             PAGE -246
-           DATA 0                             PAGE -245
-           DATA 0                             PAGE -244
-           DATA 0                             PAGE -243
-           DATA 0                             PAGE -242
-           DATA 0                             PAGE -241
-           DATA 0                             PAGE -240
-           DATA 0                             PAGE -239
-           DATA 0                             PAGE -238
-           DATA 0                             PAGE -237
-           DATA 0                             PAGE -236
-           DATA 0                             PAGE -235
-           DATA 0                             PAGE -234
-           DATA 0                             PAGE -233
-           DATA 0                             PAGE -232
-           DATA 0                             PAGE -231
-           DATA 0                             PAGE -230
-           DATA 0                             PAGE -229
-           DATA 0                             PAGE -228
-           DATA 0                             PAGE -227
-           DATA 0                             PAGE -226
-           DATA 0                             PAGE -225
-           DATA 0                             PAGE -224
-           DATA 0                             PAGE -223
-           DATA 0                             PAGE -222
-           DATA 0                             PAGE -221
-           DATA 0                             PAGE -220
-           DATA 0                             PAGE -219
-           DATA 0                             PAGE -218
-           DATA 0                             PAGE -217
-           DATA 0                             PAGE -216
-           DATA 0                             PAGE -215
-           DATA 0                             PAGE -214
-           DATA 0                             PAGE -213
-           DATA 0                             PAGE -212
-           DATA 0                             PAGE -211
-           DATA 0                             PAGE -210
-           DATA 0                             PAGE -209
-           DATA 0                             PAGE -208
-           DATA 0                             PAGE -207
-           DATA 0                             PAGE -206
-           DATA 0                             PAGE -205
-           DATA 0                             PAGE -204
-           DATA 0                             PAGE -203
-           DATA 0                             PAGE -202
-           DATA 0                             PAGE -201
-           DATA 0                             PAGE -200
-           DATA 0                             PAGE -199
-           DATA 0                             PAGE -198
-           DATA 0                             PAGE -197
-           DATA 0                             PAGE -196
-           DATA 0                             PAGE -195
-           DATA 0                             PAGE -194
-           DATA 0                             PAGE -193
-           DATA 0                             PAGE -192
-           DATA 0                             PAGE -191
-           DATA 0                             PAGE -190
-           DATA 0                             PAGE -189
-           DATA 0                             PAGE -188
-           DATA 0                             PAGE -187
-           DATA 0                             PAGE -186
-           DATA 0                             PAGE -185
-           DATA 0                             PAGE -184
-           DATA 0                             PAGE -183
-           DATA 0                             PAGE -182
-           DATA 0                             PAGE -181
-           DATA 0                             PAGE -180
-           DATA 0                             PAGE -179
-           DATA 0                             PAGE -178
-           DATA 0                             PAGE -177
-           DATA 0                             PAGE -176
-           DATA 0                             PAGE -175
-           DATA 0                             PAGE -174
-           DATA 0                             PAGE -173
-           DATA 0                             PAGE -172
-           DATA 0                             PAGE -171
-           DATA 0                             PAGE -170
-           DATA 0                             PAGE -169
-           DATA 0                             PAGE -168
-           DATA 0                             PAGE -167
-           DATA 0                             PAGE -166
-           DATA 0                             PAGE -165
-           DATA 0                             PAGE -164
-           DATA 0                             PAGE -163
-           DATA 0                             PAGE -162
-           DATA 0                             PAGE -161
-           DATA 0                             PAGE -160
-           DATA 0                             PAGE -159
-           DATA 0                             PAGE -158
-           DATA 0                             PAGE -157
-           DATA 0                             PAGE -156
-           DATA 0                             PAGE -155
-           DATA 0                             PAGE -154
-           DATA 0                             PAGE -153
-           DATA 0                             PAGE -152
-           DATA 0                             PAGE -151
-           DATA 0                             PAGE -150
-           DATA 0                             PAGE -149
-           DATA 0                             PAGE -148
-           DATA 0                             PAGE -147
-           DATA 0                             PAGE -146
-           DATA 0                             PAGE -145
-           DATA 0                             PAGE -144
-           DATA 0                             PAGE -143
-           DATA 0                             PAGE -142
-           DATA 0                             PAGE -141
-           DATA 0                             PAGE -140
-           DATA 0                             PAGE -139
-           DATA 0                             PAGE -138
-           DATA 0                             PAGE -137
-           DATA 0                             PAGE -136
-           DATA 0                             PAGE -135
-           DATA 0                             PAGE -134
-           DATA 0                             PAGE -133
-           DATA 0                             PAGE -132
-           DATA 0                             PAGE -131
-           DATA 0                             PAGE -130
-           DATA 0                             PAGE -129
-           DATA 0                             PAGE -128
-           DATA 0                             PAGE -127
-           DATA 0                             PAGE -126
-           DATA 0                             PAGE -125
-           DATA 0                             PAGE -124
-           DATA 0                             PAGE -123
-           DATA 0                             PAGE -122
-           DATA 0                             PAGE -121
-           DATA 0                             PAGE -120
-           DATA 0                             PAGE -119
-           DATA 0                             PAGE -118
-           DATA 0                             PAGE -117
-           DATA 0                             PAGE -116
-           DATA 0                             PAGE -115
-           DATA 0                             PAGE -114
-           DATA 0                             PAGE -113
-           DATA 0                             PAGE -112
-           DATA 0                             PAGE -111
-           DATA 0                             PAGE -110
-           DATA 0                             PAGE -109
-           DATA 0                             PAGE -108
-           DATA 0                             PAGE -107
-           DATA 0                             PAGE -106
-           DATA 0                             PAGE -105
-           DATA 0                             PAGE -104
-           DATA 0                             PAGE -103
-           DATA 0                             PAGE -102
-           DATA 0                             PAGE -101
-           DATA 0                             PAGE -100
-           DATA 0                             PAGE -99
-           DATA 0                             PAGE -98
-           DATA 0                             PAGE -97
-           DATA 0                             PAGE -96
-           DATA 0                             PAGE -95
-           DATA 0                             PAGE -94
-           DATA 0                             PAGE -93
-           DATA 0                             PAGE -92
-           DATA 0                             PAGE -91
-           DATA 0                             PAGE -90
-           DATA 0                             PAGE -89
-           DATA 0                             PAGE -88
-           DATA 0                             PAGE -87
-           DATA 0                             PAGE -86
-           DATA 0                             PAGE -85
-           DATA 0                             PAGE -84
-           DATA 0                             PAGE -83
-           DATA 0                             PAGE -82
-           DATA 0                             PAGE -81
-           DATA 0                             PAGE -80
-           DATA 0                             PAGE -79
-           DATA 0                             PAGE -78
-           DATA 0                             PAGE -77
-           DATA 0                             PAGE -76
-           DATA 0                             PAGE -75
-           DATA 0                             PAGE -74
-           DATA 0                             PAGE -73
-           DATA 0                             PAGE -72
-           DATA 0                             PAGE -71
-           DATA 0                             PAGE -70
-           DATA 0                             PAGE -69
-           DATA 0                             PAGE -68
-           DATA 0                             PAGE -67
-           DATA 0                             PAGE -66
-           DATA 0                             PAGE -65
-           DATA 0                             PAGE -64
-           DATA 0                             PAGE -63
-           DATA 0                             PAGE -62
-           DATA 0                             PAGE -61
-           DATA 0                             PAGE -60
-           DATA 0                             PAGE -59
-           DATA 0                             PAGE -58
-           DATA 0                             PAGE -57
-           DATA 0                             PAGE -56
-           DATA 0                             PAGE -55
-           DATA 0                             PAGE -54
-           DATA 0                             PAGE -53
-           DATA 0                             PAGE -52
-           DATA 0                             PAGE -51
-           DATA 0                             PAGE -50
-           DATA 0                             PAGE -49
-           DATA 0                             PAGE -48
-           DATA 0                             PAGE -47
-           DATA 0                             PAGE -46
-           DATA 0                             PAGE -45
-           DATA 0                             PAGE -44
-           DATA 0                             PAGE -43
-           DATA 0                             PAGE -42
-           DATA 0                             PAGE -41
-           DATA 0                             PAGE -40
-           DATA 0                             PAGE -39
-           DATA 0                             PAGE -38
-           DATA 0                             PAGE -37
-           DATA 0                             PAGE -36
-           DATA 0                             PAGE -35
-           DATA 0                             PAGE -34
-           DATA 0                             PAGE -33
-           DATA 0                             PAGE -32
-           DATA 0                             PAGE -31
-           DATA 0                             PAGE -30
-           DATA 0                             PAGE -29
-           DATA 0                             PAGE -28
-           DATA 0                             PAGE -27
-           DATA 0                             PAGE -26
-           DATA 0                             PAGE -25
-           DATA 0                             PAGE -24
-           DATA 0                             PAGE -23
-           DATA 0                             PAGE -22
-           DATA 0                             PAGE -21
-           DATA 0                             PAGE -20
-           DATA 0                             PAGE -19
-           DATA 0                             PAGE -18
-           DATA 0                             PAGE -17
-           DATA 0                             PAGE -16
-           DATA 0                             PAGE -15
-           DATA 0                             PAGE -14
-           DATA 0                             PAGE -13
-           DATA 0                             PAGE -12
-           DATA 0                             PAGE -11
-           DATA 0                             PAGE -10
-           DATA 0                             PAGE -9
-           DATA 0                             PAGE -8
-           DATA 0                             PAGE -7
-           DATA 0                             PAGE -6
-           DATA 0                             PAGE -5
-           DATA 0                             PAGE -4
-           DATA 0                             PAGE -3
-           DATA 0                             PAGE -2
-           DATA 1                             PAGE -1    MMIP
-MMIPMID    DATA 1                             PAGE 0     SYSTEM SOFTWARE
-           DATA 1                             PAGE 1
-           DATA 0                             PAGE 2
-           DATA 0                             PAGE 3
-           DATA 0                             PAGE 4
-           DATA 0                             PAGE 5
-           DATA 0                             PAGE 6
-           DATA 0                             PAGE 7
-           DATA 0                             PAGE 8
-           DATA 0                             PAGE 9
-           DATA 0                             PAGE 10
-           DATA 0                             PAGE 11
-           DATA 0                             PAGE 12
-           DATA 0                             PAGE 13
-           DATA 0                             PAGE 14
-           DATA 0                             PAGE 15
-           DATA 0                             PAGE 16
-           DATA 0                             PAGE 17
-           DATA 0                             PAGE 18
-           DATA 0                             PAGE 19
-           DATA 0                             PAGE 20
-           DATA 0                             PAGE 21
-           DATA 0                             PAGE 22
-           DATA 0                             PAGE 23
-           DATA 0                             PAGE 24
-           DATA 0                             PAGE 25
-           DATA 0                             PAGE 26
-           DATA 0                             PAGE 27
-           DATA 0                             PAGE 28
-           DATA 0                             PAGE 29
-           DATA 0                             PAGE 30
-           DATA 0                             PAGE 31
-           DATA 0                             PAGE 32
-           DATA 0                             PAGE 33
-           DATA 0                             PAGE 34
-           DATA 0                             PAGE 35
-           DATA 0                             PAGE 36
-           DATA 0                             PAGE 37
-           DATA 0                             PAGE 38
-           DATA 0                             PAGE 39
-           DATA 0                             PAGE 40
-           DATA 0                             PAGE 41
-           DATA 0                             PAGE 42
-           DATA 0                             PAGE 43
-           DATA 0                             PAGE 44
-           DATA 0                             PAGE 45
-           DATA 0                             PAGE 46
-           DATA 0                             PAGE 47
-           DATA 0                             PAGE 48
-           DATA 0                             PAGE 49
-           DATA 0                             PAGE 50
-           DATA 0                             PAGE 51
-           DATA 0                             PAGE 52
-           DATA 0                             PAGE 53
-           DATA 0                             PAGE 54
-           DATA 0                             PAGE 55
-           DATA 0                             PAGE 56
-           DATA 0                             PAGE 57
-           DATA 0                             PAGE 58
-           DATA 0                             PAGE 59
-           DATA 0                             PAGE 60
-           DATA 0                             PAGE 61
-           DATA 0                             PAGE 62
-           DATA 0                             PAGE 63
-           DATA 0                             PAGE 64
-           DATA 0                             PAGE 65
-           DATA 0                             PAGE 66
-           DATA 0                             PAGE 67
-           DATA 0                             PAGE 68
-           DATA 0                             PAGE 69
-           DATA 0                             PAGE 70
-           DATA 0                             PAGE 71
-           DATA 0                             PAGE 72
-           DATA 0                             PAGE 73
-           DATA 0                             PAGE 74
-           DATA 0                             PAGE 75
-           DATA 0                             PAGE 76
-           DATA 0                             PAGE 77
-           DATA 0                             PAGE 78
-           DATA 0                             PAGE 79
-           DATA 0                             PAGE 80
-           DATA 0                             PAGE 81
-           DATA 0                             PAGE 82
-           DATA 0                             PAGE 83
-           DATA 0                             PAGE 84
-           DATA 0                             PAGE 85
-           DATA 0                             PAGE 86
-           DATA 0                             PAGE 87
-           DATA 0                             PAGE 88
-           DATA 0                             PAGE 89
-           DATA 0                             PAGE 90
-           DATA 0                             PAGE 91
-           DATA 0                             PAGE 92
-           DATA 0                             PAGE 93
-           DATA 0                             PAGE 94
-           DATA 0                             PAGE 95
-           DATA 0                             PAGE 96
-           DATA 0                             PAGE 97
-           DATA 0                             PAGE 98
-           DATA 0                             PAGE 99
-           DATA 0                             PAGE 100
-           DATA 0                             PAGE 101
-           DATA 0                             PAGE 102
-           DATA 0                             PAGE 103
-           DATA 0                             PAGE 104
-           DATA 0                             PAGE 105
-           DATA 0                             PAGE 106
-           DATA 0                             PAGE 107
-           DATA 0                             PAGE 108
-           DATA 0                             PAGE 109
-           DATA 0                             PAGE 110
-           DATA 0                             PAGE 111
-           DATA 0                             PAGE 112
-           DATA 0                             PAGE 113
-           DATA 0                             PAGE 114
-           DATA 0                             PAGE 115
-           DATA 0                             PAGE 116
-           DATA 0                             PAGE 117
-           DATA 0                             PAGE 118
-           DATA 0                             PAGE 119
-           DATA 0                             PAGE 120
-           DATA 0                             PAGE 121
-           DATA 0                             PAGE 122
-           DATA 0                             PAGE 123
-           DATA 0                             PAGE 124
-           DATA 0                             PAGE 125
-           DATA 0                             PAGE 126
-           DATA 0                             PAGE 127
-           DATA 0                             PAGE 128
-           DATA 0                             PAGE 129
-           DATA 0                             PAGE 130
-           DATA 0                             PAGE 131
-           DATA 0                             PAGE 132
-           DATA 0                             PAGE 133
-           DATA 0                             PAGE 134
-           DATA 0                             PAGE 135
-           DATA 0                             PAGE 136
-           DATA 0                             PAGE 137
-           DATA 0                             PAGE 138
-           DATA 0                             PAGE 139
-           DATA 0                             PAGE 140
-           DATA 0                             PAGE 141
-           DATA 0                             PAGE 142
-           DATA 0                             PAGE 143
-           DATA 0                             PAGE 144
-           DATA 0                             PAGE 145
-           DATA 0                             PAGE 146
-           DATA 0                             PAGE 147
-           DATA 0                             PAGE 148
-           DATA 0                             PAGE 149
-           DATA 0                             PAGE 150
-           DATA 0                             PAGE 151
-           DATA 0                             PAGE 152
-           DATA 0                             PAGE 153
-           DATA 0                             PAGE 154
-           DATA 0                             PAGE 155
-           DATA 0                             PAGE 156
-           DATA 0                             PAGE 157
-           DATA 0                             PAGE 158
-           DATA 0                             PAGE 159
-           DATA 0                             PAGE 160
-           DATA 0                             PAGE 161
-           DATA 0                             PAGE 162
-           DATA 0                             PAGE 163
-           DATA 0                             PAGE 164
-           DATA 0                             PAGE 165
-           DATA 0                             PAGE 166
-           DATA 0                             PAGE 167
-           DATA 0                             PAGE 168
-           DATA 0                             PAGE 169
-           DATA 0                             PAGE 170
-           DATA 0                             PAGE 171
-           DATA 0                             PAGE 172
-           DATA 0                             PAGE 173
-           DATA 0                             PAGE 174
-           DATA 0                             PAGE 175
-           DATA 0                             PAGE 176
-           DATA 0                             PAGE 177
-           DATA 0                             PAGE 178
-           DATA 0                             PAGE 179
-           DATA 0                             PAGE 180
-           DATA 0                             PAGE 181
-           DATA 0                             PAGE 182
-           DATA 0                             PAGE 183
-           DATA 0                             PAGE 184
-           DATA 0                             PAGE 185
-           DATA 0                             PAGE 186
-           DATA 0                             PAGE 187
-           DATA 0                             PAGE 188
-           DATA 0                             PAGE 189
-           DATA 0                             PAGE 190
-           DATA 0                             PAGE 191
-           DATA 0                             PAGE 192
-           DATA 0                             PAGE 193
-           DATA 0                             PAGE 194
-           DATA 0                             PAGE 195
-           DATA 0                             PAGE 196
-           DATA 0                             PAGE 197
-           DATA 0                             PAGE 198
-           DATA 0                             PAGE 199
-           DATA 0                             PAGE 200
-           DATA 0                             PAGE 201
-           DATA 0                             PAGE 202
-           DATA 0                             PAGE 203
-           DATA 0                             PAGE 204
-           DATA 0                             PAGE 205
-           DATA 0                             PAGE 206
-           DATA 0                             PAGE 207
-           DATA 0                             PAGE 208
-           DATA 0                             PAGE 209
-           DATA 0                             PAGE 210
-           DATA 0                             PAGE 211
-           DATA 0                             PAGE 212
-           DATA 0                             PAGE 213
-           DATA 0                             PAGE 214
-           DATA 0                             PAGE 215
-           DATA 0                             PAGE 216
-           DATA 0                             PAGE 217
-           DATA 0                             PAGE 218
-           DATA 0                             PAGE 219
-           DATA 0                             PAGE 220
-           DATA 0                             PAGE 221
-           DATA 0                             PAGE 222
-           DATA 0                             PAGE 223
-           DATA 0                             PAGE 224
-           DATA 0                             PAGE 225
-           DATA 0                             PAGE 226
-           DATA 0                             PAGE 227
-           DATA 0                             PAGE 228
-           DATA 0                             PAGE 229
-           DATA 0                             PAGE 230
-           DATA 0                             PAGE 231
-           DATA 0                             PAGE 232
-           DATA 0                             PAGE 233
-           DATA 0                             PAGE 234
-           DATA 0                             PAGE 235
-           DATA 0                             PAGE 236
-           DATA 0                             PAGE 237
-           DATA 0                             PAGE 238
-           DATA 0                             PAGE 239
-           DATA 0                             PAGE 240
-           DATA 0                             PAGE 241
-           DATA 0                             PAGE 242
-           DATA 0                             PAGE 243
-           DATA 0                             PAGE 244
-           DATA 0                             PAGE 245
-           DATA 0                             PAGE 246
-           DATA 0                             PAGE 247
-           DATA 0                             PAGE 248
-           DATA 0                             PAGE 249
-           DATA 0                             PAGE 250
-           DATA 0                             PAGE 251
-           DATA 0                             PAGE 252
-           DATA 0                             PAGE 253
-           DATA 0                             PAGE 254
-           DATA 0                             PAGE 255
-           DATA 0                             PAGE 256
-           DATA 0                             PAGE 257
-           DATA 0                             PAGE 258
-           DATA 0                             PAGE 259
-           DATA 0                             PAGE 260
-           DATA 0                             PAGE 261
-           DATA 0                             PAGE 262
-           DATA 0                             PAGE 263
-           DATA 0                             PAGE 264
-           DATA 0                             PAGE 265
-           DATA 0                             PAGE 266
-           DATA 0                             PAGE 267
-           DATA 0                             PAGE 268
-           DATA 0                             PAGE 269
-           DATA 0                             PAGE 270
-           DATA 0                             PAGE 271
-           DATA 0                             PAGE 272
-           DATA 0                             PAGE 273
-           DATA 0                             PAGE 274
-           DATA 0                             PAGE 275
-           DATA 0                             PAGE 276
-           DATA 0                             PAGE 277
-           DATA 0                             PAGE 278
-           DATA 0                             PAGE 279
-           DATA 0                             PAGE 280
-           DATA 0                             PAGE 281
-           DATA 0                             PAGE 282
-           DATA 0                             PAGE 283
-           DATA 0                             PAGE 284
-           DATA 0                             PAGE 285
-           DATA 0                             PAGE 286
-           DATA 0                             PAGE 287
-           DATA 0                             PAGE 288
-           DATA 0                             PAGE 289
-           DATA 0                             PAGE 290
-           DATA 0                             PAGE 291
-           DATA 0                             PAGE 292
-           DATA 0                             PAGE 293
-           DATA 0                             PAGE 294
-           DATA 0                             PAGE 295
-           DATA 0                             PAGE 296
-           DATA 0                             PAGE 297
-           DATA 0                             PAGE 298
-           DATA 0                             PAGE 299
-           DATA 0                             PAGE 300
-           DATA 0                             PAGE 301
-           DATA 0                             PAGE 302
-           DATA 0                             PAGE 303
-           DATA 0                             PAGE 304
-           DATA 0                             PAGE 305
-           DATA 0                             PAGE 306
-           DATA 0                             PAGE 307
-           DATA 0                             PAGE 308
-           DATA 0                             PAGE 309
-           DATA 0                             PAGE 310
-           DATA 0                             PAGE 311
-           DATA 0                             PAGE 312
-           DATA 0                             PAGE 313
-           DATA 0                             PAGE 314
-           DATA 0                             PAGE 315
-           DATA 0                             PAGE 316
-           DATA 0                             PAGE 317
-           DATA 0                             PAGE 318
-           DATA 0                             PAGE 319
-           DATA 0                             PAGE 320
-           DATA 0                             PAGE 321
-           DATA 0                             PAGE 322
-           DATA 0                             PAGE 323
-           DATA 0                             PAGE 324
-           DATA 0                             PAGE 325
-           DATA 0                             PAGE 326
-           DATA 0                             PAGE 327
-           DATA 0                             PAGE 328
-           DATA 0                             PAGE 329
-           DATA 0                             PAGE 330
-           DATA 0                             PAGE 331
-           DATA 0                             PAGE 332
-           DATA 0                             PAGE 333
-           DATA 0                             PAGE 334
-           DATA 0                             PAGE 335
-           DATA 0                             PAGE 336
-           DATA 0                             PAGE 337
-           DATA 0                             PAGE 338
-           DATA 0                             PAGE 339
-           DATA 0                             PAGE 340
-           DATA 0                             PAGE 341
-           DATA 0                             PAGE 342
-           DATA 0                             PAGE 343
-           DATA 0                             PAGE 344
-           DATA 0                             PAGE 345
-           DATA 0                             PAGE 346
-           DATA 0                             PAGE 347
-           DATA 0                             PAGE 348
-           DATA 0                             PAGE 349
-           DATA 0                             PAGE 350
-           DATA 0                             PAGE 351
-           DATA 0                             PAGE 352
-           DATA 0                             PAGE 353
-           DATA 0                             PAGE 354
-           DATA 0                             PAGE 355
-           DATA 0                             PAGE 356
-           DATA 0                             PAGE 357
-           DATA 0                             PAGE 358
-           DATA 0                             PAGE 359
-           DATA 0                             PAGE 360
-           DATA 0                             PAGE 361
-           DATA 0                             PAGE 362
-           DATA 0                             PAGE 363
-MMIPHIGH   DATA 0                             PAGE 364
+                                              MEMORY MAPPING INFORMATION PAGE
+           OFFSET -729
+MMIPMID
+           OFFSET -1093
+MMIPLOW
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -364, PAGE -356
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -355, PAGE -347
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -346, PAGE -338
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -337, PAGE -329
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -328, PAGE -320
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -319, PAGE -311
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -310, PAGE -302
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -301, PAGE -293
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -292, PAGE -284
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -283, PAGE -275
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -274, PAGE -266
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -265, PAGE -257
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -256, PAGE -248
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -247, PAGE -239
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -238, PAGE -230
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -229, PAGE -221
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -220, PAGE -212
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -211, PAGE -203
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -202, PAGE -194
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -193, PAGE -185
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -184, PAGE -176
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -175, PAGE -167
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -166, PAGE -158
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -157, PAGE -149
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -148, PAGE -140
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -139, PAGE -131
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -130, PAGE -122
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -121, PAGE -113
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -112, PAGE -104
+           DATA 0 0 0 0 0 0 0 0 0             PAGE -103, PAGE  -95
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -94, PAGE  -86
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -85, PAGE  -77
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -76, PAGE  -68
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -67, PAGE  -59
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -58, PAGE  -50
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -49, PAGE  -41
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -40, PAGE  -32
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -31, PAGE  -23
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -22, PAGE  -14
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  -13, PAGE   -5
+           DATA 0 0 0 1 1 1 0 0 0             PAGE   -4, PAGE    4
+           DATA 0 0 0 0 0 0 0 0 0             PAGE    5, PAGE   13
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   14, PAGE   22
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   23, PAGE   31
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   32, PAGE   40
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   41, PAGE   49
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   50, PAGE   58
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   59, PAGE   67
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   68, PAGE   76
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   77, PAGE   85
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   86, PAGE   94
+           DATA 0 0 0 0 0 0 0 0 0             PAGE   95, PAGE  103
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  104, PAGE  112
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  113, PAGE  121
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  122, PAGE  130
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  131, PAGE  139
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  140, PAGE  148
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  149, PAGE  157
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  158, PAGE  166
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  167, PAGE  175
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  176, PAGE  184
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  185, PAGE  193
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  194, PAGE  202
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  203, PAGE  211
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  212, PAGE  220
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  221, PAGE  229
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  230, PAGE  238
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  239, PAGE  247
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  248, PAGE  256
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  257, PAGE  265
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  266, PAGE  274
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  275, PAGE  283
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  284, PAGE  292
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  293, PAGE  301
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  302, PAGE  310
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  311, PAGE  319
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  320, PAGE  328
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  329, PAGE  337
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  338, PAGE  346
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  347, PAGE  355
+           DATA 0 0 0 0 0 0 0 0 0             PAGE  356, PAGE  364
+MMIPHIGH
 
 
            OFFSET 0                           RESET INTERRUPT

@@ -140,12 +140,12 @@ begin
     end;
 
     if GStrInstruction <> '' then begin
-      { Four parts per instruction }
       GStrParts := Split(GStrInstruction);
-      SetLength(GStrParts, 4);
 
       if GStrParts[0] = 'OFFSET' then begin
         GProgramCounter := ParseValue(GStrParts[1]);
+      end else if GStrParts[0] = 'DATA' then begin
+        GProgramCounter += Length(GStrParts) - 1;
       end else begin
         GProgramCounter += 1;
       end;
@@ -162,21 +162,21 @@ begin
     SplitLine(GLines[GLineIndex], GStrLabel, GStrInstruction);
 
     if GStrInstruction <> '' then begin
-      { Four parts per instruction }
       GStrParts := Split(GStrInstruction);
-      SetLength(GStrParts, 4);
 
       if GStrParts[0] = 'OFFSET' then begin
         GProgramCounter := ParseValue(GStrParts[1]);
       end else if GStrParts[0] = 'DATA' then begin
         { Data definition }
-        GOutputValue := ParseValue(GStrParts[1]);
+        for GIndex := Low(GStrParts) + 1 to High(GStrParts) do begin
+          GOutputValue := ParseValue(GStrParts[GIndex]);
+          WriteLn(GOutputFile, GProgramCounter + (GIndex - 1), ' ', GOutputValue);
+        end;
 
-        { Emit the instruction }
-        WriteLn(GOutputFile, GProgramCounter, ' ', GOutputValue);
-        GProgramCounter += 1;
+        GProgramCounter += Length(GStrParts) - 1;
       end else begin
         { Regular instructions }
+        SetLength(GStrParts, 4);
         SetLength(GWordParts, Length(GStrParts));
 
         for GIndex := Low(GStrParts) to High(GStrParts) do
