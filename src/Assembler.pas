@@ -142,7 +142,7 @@ begin
     if GStrInstruction <> '' then begin
       GStrParts := Split(GStrInstruction);
 
-      if GStrParts[0] = 'OFFSET' then begin
+      if GStrParts[0] = 'OFFS' then begin
         GProgramCounter := ParseValue(GStrParts[1]);
       end else if GStrParts[0] = 'DATA' then begin
         GProgramCounter += Length(GStrParts) - 1;
@@ -164,7 +164,7 @@ begin
     if GStrInstruction <> '' then begin
       GStrParts := Split(GStrInstruction);
 
-      if GStrParts[0] = 'OFFSET' then begin
+      if GStrParts[0] = 'OFFS' then begin
         GProgramCounter := ParseValue(GStrParts[1]);
       end else if GStrParts[0] = 'DATA' then begin
         { Data definition }

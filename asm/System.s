@@ -1,7 +1,7 @@
                                               MEMORY MAPPING INFORMATION PAGE
-           OFFSET -729
+           OFFS -729
 MMIPMID
-           OFFSET -1093
+           OFFS -1093
 MMIPLOW
            DATA 0 0 0 0 0 0 0 0 0             PAGE -364, PAGE -356
            DATA 0 0 0 0 0 0 0 0 0             PAGE -355, PAGE -347
@@ -87,11 +87,11 @@ MMIPLOW
 MMIPHIGH
 
 
-           OFFSET 0                           RESET INTERRUPT
+           OFFS 0                           RESET INTERRUPT
 INTERRUPT  LDHH IRA >START
            ADDH IRA <START
            RETI
 
 
-           OFFSET 729
+           OFFS 729
 START      ADDH PC 'START
