@@ -29,11 +29,23 @@ impl Expression {
     }
 
     fn complexity(&self) -> usize {
+        let compl = self.complexity_impl();
+
+        // Having subtraction in the expression adds plus 1 complexity due to
+        // the inverse register initialization
+        if self.has_subtraction() {
+            compl + 1
+        } else {
+            compl
+        }
+    }
+
+    fn complexity_impl(&self) -> usize {
         match self {
             Self::Value => 1,
-            Self::AddValue { lhs } => lhs.complexity() + 1,
-            Self::SubValue { lhs } => lhs.complexity() + 1,
-            Self::ShiftBy { lhs, .. } => lhs.complexity() + 1,
+            Self::AddValue { lhs } => lhs.complexity_impl() + 1,
+            Self::SubValue { lhs } => lhs.complexity_impl() + 1,
+            Self::ShiftBy { lhs, .. } => lhs.complexity_impl() + 1,
         }
     }
 
