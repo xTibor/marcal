@@ -37,6 +37,15 @@ impl Expression {
         }
     }
 
+    fn has_subtraction(&self) -> bool {
+        match self {
+            Self::Value => false,
+            Self::AddValue { lhs } => lhs.has_subtraction(),
+            Self::SubValue { .. } => true,
+            Self::ShiftBy { lhs, .. } => lhs.has_subtraction(),
+        }
+    }
+
     fn new(value: usize) -> Self {
         match value {
             0 => unreachable!(),
@@ -52,7 +61,13 @@ impl Expression {
                 let method_1 = Self::new_method_1(value);
                 let method_2 = Self::new_method_2(value);
 
-                if method_1.complexity() < method_2.complexity() {
+                if method_1.complexity() == method_2.complexity() {
+                    if !method_1.has_subtraction() {
+                        method_1
+                    } else {
+                        method_2
+                    }
+                } else if method_1.complexity() < method_2.complexity() {
                     method_1
                 } else {
                     method_2
@@ -113,30 +128,33 @@ impl Expression {
 
     fn assembly(&self) -> String {
         let mut s = String::new();
-        self.assembly_impl(&mut s).expect("failed to generate assembly");
+        self.assembly_impl(&mut s, self.has_subtraction())
+            .expect("failed to generate assembly");
         s
     }
 
-    fn assembly_impl<W: fmt::Write>(&self, f: &mut W) -> fmt::Result {
+    fn assembly_impl<W: fmt::Write>(&self, f: &mut W, has_subtraction: bool) -> fmt::Result {
         // U1 - Operand
         // U2 - Operand (inverse)
         // U3 - Result
         match self {
             Self::Value => {
                 writeln!(f, "LDLH U1 0")?;
-                writeln!(f, "NEGR U2 U1")?;
+                if has_subtraction {
+                    writeln!(f, "NEGR U2 U1")?;
+                }
                 writeln!(f, "ADDR U3 U1 ZERO")?;
             }
             Self::AddValue { lhs } => {
-                lhs.assembly_impl(f)?;
+                lhs.assembly_impl(f, has_subtraction)?;
                 writeln!(f, "ADDR U3 U3 U1")?;
             }
             Self::SubValue { lhs } => {
-                lhs.assembly_impl(f)?;
+                lhs.assembly_impl(f, has_subtraction)?;
                 writeln!(f, "ADDR U3 U3 U2")?;
             }
             Self::ShiftBy { lhs, shift } => {
-                lhs.assembly_impl(f)?;
+                lhs.assembly_impl(f, has_subtraction)?;
                 writeln!(f, "SHLQ U3 U3 {}", shift)?;
             }
         }
