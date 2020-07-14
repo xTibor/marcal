@@ -87,7 +87,7 @@ MMIPLOW
 MMIPHIGH
 
 
-           OFFS 0                           RESET INTERRUPT
+           OFFS 0                             RESET INTERRUPT
 INTERRUPT  LDHH IRA >START
            ADDH IRA <START
            RETI
