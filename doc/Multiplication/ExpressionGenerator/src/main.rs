@@ -115,7 +115,7 @@ impl Expression {
     }
 
     fn new_method_2(value: usize) -> Self {
-        let mut base = Self::new((value + 1) / 3);
+        let mut base = Self::new((value + 2) / 3);
 
         if let Self::ShiftBy { ref mut shift, .. } = base {
             *shift += 1;
@@ -126,14 +126,16 @@ impl Expression {
             }
         }
 
-        match ((value + 1) % 3) as isize - 1 {
+        match ((value + 2) % 3) as isize - 2 {
+            -2 => Self::SubValue {
+                lhs: Box::new(Self::SubValue {
+                    lhs: Box::new(base),
+                }),
+            },
             -1 => Self::SubValue {
                 lhs: Box::new(base),
             },
             0 => base,
-            1 => Self::AddValue {
-                lhs: Box::new(base),
-            },
             _ => unreachable!(),
         }
     }
