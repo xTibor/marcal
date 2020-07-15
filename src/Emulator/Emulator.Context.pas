@@ -1,9 +1,11 @@
-unit ExecutionContext;
+unit Emulator.Context;
 
 interface
 
 uses
-  Trit, Words, Arch;
+  Common.Arch,
+  Common.Trit,
+  Common.Words;
 
 type
   TExecutionContext = record

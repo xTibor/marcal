@@ -4,7 +4,10 @@
 program Emulator;
 
 uses
-  Trit, Words, Arch, ExecutionContext;
+  Common.Arch,
+  Common.Trit,
+  Common.Words,
+  Emulator.Context;
 
 procedure LoadProgram(var AContext: TExecutionContext; APath: String);
 var

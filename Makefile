@@ -17,7 +17,9 @@ run: $(TOOLS) $(EXAMPLES)
 asm: $(TOOLS) $(EXAMPLES)
 
 build/% : src/%.pas
-	fpc -gl -FEbuild $<
+	fpc -gl -FEbuild $< \
+		-Fusrc/Common \
+		-Fusrc/Emulator
 
 build/%.t : asm/%.s build/Assembler
 	build/Assembler $< $@

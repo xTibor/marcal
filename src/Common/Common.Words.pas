@@ -1,9 +1,9 @@
-unit Words;
+unit Common.Words;
 
 interface
 
 uses
-  Trit;
+  Common.Trit;
 
 { Word data type }
 
@@ -60,7 +60,7 @@ function WordToDyadicFunction(AWord: TWord): TTritDyadicFunction;
 implementation
 
 uses
-  Utils;
+  Common.Utils;
 
 { Generic word functions }
 

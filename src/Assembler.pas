@@ -4,7 +4,13 @@
 program Assembler;
 
 uses
-  Trit, Words, Arch, Utils, SysUtils, Fgl, StrUtils;
+  Common.Arch,
+  Common.Trit,
+  Common.Utils,
+  Common.Words,
+  Fgl,
+  StrUtils,
+  SysUtils;
 
 type
   TSymbolTable = specialize TFPGMap<String, TWord>;
