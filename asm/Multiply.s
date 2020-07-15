@@ -2,12 +2,12 @@
                                               EXAMPLE PROGRAM
 
 
-START      LDHH S2 1                          SETUP STACK POINTER
+START      LDHH S9 1                          SETUP STACK POINTER
            LDLH U1 0                          OPERAND A
            LDLH U2 0                          OPERAND B
            LDLH U12 100                       ITERATION COUNT
 LOOP       ADDQ U13 PC 'MULTIPLY
-           CALL S2 U13
+           CALL S9 U13
            UD12 U3
            ADDH U1 1
            ADDH U2 1
@@ -20,14 +20,14 @@ HALT       UD13
                                               U1  OPERAND A
                                               U2  OPERAND B
                                               U3  RESULT
-MULTIPLY   PUSH S2 U4
-           PUSH S2 U5
-           PUSH S2 U6
-           PUSH S2 U7
-           PUSH S2 U8
-           PUSH S2 U9
-           PUSH S2 U10
-           PUSH S2 U11
+MULTIPLY   PUSH S9 U4
+           PUSH S9 U5
+           PUSH S9 U6
+           PUSH S9 U7
+           PUSH S9 U8
+           PUSH S9 U9
+           PUSH S9 U10
+           PUSH S9 U11
            LDLH U3 0                          RESULT
            LDLH U4 11                         COUNTER
            LDHH U5 >5824                      MULTIPLICATION TRUTH TABLE
@@ -54,12 +54,12 @@ SHIFTADD   ADDR U7 U5 ZERO                    LOAD TRUTH TABLE
            ADDR U3 U3 U7                      ADD TO RESULT
 LOOPNEXT   ADDH U4 -1                         STEP THE COUNTER
            BRLE U10 ZERO U4                   BRANCH TO LOOPSTART
-           PULL S2 U11
-           PULL S2 U10
-           PULL S2 U9
-           PULL S2 U8
-           PULL S2 U7
-           PULL S2 U6
-           PULL S2 U5
-           PULL S2 U4
-           PULL S2 PC
+           PULL S9 U11
+           PULL S9 U10
+           PULL S9 U9
+           PULL S9 U8
+           PULL S9 U7
+           PULL S9 U6
+           PULL S9 U5
+           PULL S9 U4
+           PULL S9 PC
